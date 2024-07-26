@@ -9,6 +9,7 @@ git clone https://github.com/hiephtdev/allora-worker
 ## 2. Cài đặt môi trường
 
 ```bash
+cd allora-worker
 curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/scripts/init.sh | bash
 ```
 
@@ -64,6 +65,15 @@ Vào link và paste địa chỉ ví allora dạng `allo1jzvjewf0...`  [https://
 
 ```bash
 cd worker-10m
+
+# Tạo thư mục cho worker-10m
+mkdir -p worker-topic-1-data
+chmod 777 worker-topic-1-data
+mkdir -p worker-topic-3-data
+chmod 777 worker-topic-3-data
+mkdir -p worker-topic-5-data
+chmod 777 worker-topic-5-data
+
 docker compose up -d
 ```
 
@@ -87,13 +97,13 @@ Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered 
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
-Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker
+Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
 
 ```bash
-docker compose restart
+docker restart logs net1-worker1-topic-1 net1-worker1-topic-2 net1-worker1-topic-3
 ```
 
-Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+Tiếp theo lặp lại lệnh kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Khong_ket_not_head_node.png">
 
@@ -105,13 +115,21 @@ Nếu như ảnh dưới chạy worker là thành công
 
 ```bash
 cd worker-24h
+# Tạo thư mục cho worker-24h
+mkdir -p worker-topic-2-data
+chmod 777 worker-topic-2-data
+mkdir -p worker-topic-4-data
+chmod 777 worker-topic-4-data
+mkdir -p worker-topic-6-data
+chmod 777 worker-topic-6-data
+
 docker compose up -d
 ```
 
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs net1-worker2-topic-2-f
+docker logs net1-worker2-topic-2 -f
 ```
 
 ```bash
@@ -128,10 +146,10 @@ Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered 
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
-Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker
+Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker compose restart
+docker restart net1-worker2-topic-2 net1-worker2-topic-4 net1-worker2-topic-6
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
