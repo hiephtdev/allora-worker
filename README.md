@@ -3,7 +3,7 @@
 ## 1. Cài đặt môi trường
 
 ```bash
-curl -sL1 curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/scripts/init.sh | bash
+curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/scripts/init.sh | bash
 ```
 
 Sau khi cài đặt xong gõ các lệnh dưới nếu chạy thành công là hoàn tất cài đặt môi trường
