@@ -27,7 +27,5 @@ services:
       - type: bind
         source: ./worker-topic-10-data
         target: /data
-    env_file:
-      - .env
     ports:
       - "9110:9110" # expose p2p port

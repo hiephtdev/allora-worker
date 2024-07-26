@@ -49,11 +49,17 @@ nano worker-10m/docker-compose.yaml
 
 - Dùng bàn phím lên xuống tìm đến 3 dòng `[SEED PHASE]` thay thế cụm này bằng seed phase ví của bạn
 
+- Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
 ### Tương tự với worker-24h
 
 ```bash
 nano worker-24h/docker-compose.yaml
 ```
+
+- Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+### Tương tự với các worker khác
 
 ## 4. Tiến hành faucet
 
@@ -73,7 +79,19 @@ mkdir -p worker-topic-3-data
 chmod 777 worker-topic-3-data
 mkdir -p worker-topic-5-data
 chmod 777 worker-topic-5-data
+```
 
+Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
+
+```bash
+nano docker-compose.yaml
+```
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+Chạy worker
+
+```bash
 docker compose up -d
 ```
 
@@ -122,7 +140,19 @@ mkdir -p worker-topic-4-data
 chmod 777 worker-topic-4-data
 mkdir -p worker-topic-6-data
 chmod 777 worker-topic-6-data
+```
 
+Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
+
+```bash
+nano docker-compose.yaml
+```
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+Chạy worker
+
+```bash
 docker compose up -d
 ```
 
@@ -171,7 +201,19 @@ mkdir -p worker-topic-8-data
 chmod 777 worker-topic-8-data
 mkdir -p worker-topic-9-data
 chmod 777 worker-topic-9-data
+```
 
+Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
+
+```bash
+nano docker-compose.yaml
+```
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+Chạy worker
+
+```bash
 docker compose up -d
 ```
 
@@ -199,6 +241,55 @@ Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại
 
 ```bash
 docker restart net1-worker3-topic-7 net1-worker3-topic-8 net1-worker3-topic-9
+```
+
+Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Khong_ket_not_head_node.png">
+
+Nếu như ảnh dưới chạy worker là thành công
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Chay_thanh_cong.png">
+
+- Chạy worker đự đoán giá meme => đợi khi nào báo thành công hết thì là chạy xong
+
+```bash
+cd worker-meme
+# Tạo thư mục cho worker-20m
+mkdir -p worker-topic-10-data
+chmod 777 worker-topic-10-data
+```
+
+Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
+
+```bash
+nano docker-compose.yaml
+```
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+Chạy worker
+
+```bash
+docker compose up -d
+```
+
+Kiểm tra worker đã chạy chưa
+
+```bash
+docker logs worker_topic_10 -f
+```
+
+Nếu hiện `worker_topic_10 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+
+Hiện `worker_topic_10 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
+
+Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
+
+```bash
+docker restart worker_topic_10
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
