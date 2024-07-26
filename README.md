@@ -79,13 +79,21 @@ Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register 
 
 Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
+
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker
 
 ```bash
 docker compose restart
 ```
 
-Tiếp theo kiểm tra xem node có kết nôi được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Khong_ket_not_head_node.png">
+
+Nếu như ảnh dưới chạy worker là thành công
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Chay_thanh_cong.png">
 
 - Chạy worker 24h => đợi khi nào báo thành công hết thì là chạy xong
 
@@ -108,9 +116,11 @@ docker logs net1-worker2-topic-4 -f
 docker logs net1-worker2-topic-6 -f
 ```
 
-Nếu hiện `net1-worker2-topic-2 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `net1-worker2-topic-2 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker
 
@@ -118,7 +128,13 @@ Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại
 docker compose restart
 ```
 
-Tiếp theo kiểm tra xem node có kết nôi được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Khong_ket_not_head_node.png">
+
+Nếu như ảnh dưới chạy worker là thành công
+
+<img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Chay_thanh_cong.png">
 
 ### Hoàn tất giờ đợi nổ điểm tại
 
