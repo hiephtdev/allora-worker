@@ -1,0 +1,181 @@
+version: '3'
+
+services:
+  inference:
+    container_name: net1-worker1-inference
+    build:
+      context: .
+    command: python -u /app/app.py
+    ports:
+      - "8011:8011"
+    networks:
+      net1-worker1:
+        aliases:
+          - inference
+        ipv4_address: 172.31.0.2
+    healthcheck:
+      # test: ["CMD", "curl", "-f", "http://localhost:8011/inference/ETH"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8011/inference/ETH || exit 1 && curl -f http://localhost:8011/inference/BTC || exit 1 && curl -f http://localhost:8011/inference/SOL || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 300s
+    volumes:
+      - ./inference-data:/app/data
+  
+  updater:
+    container_name: net1-updater1
+    build: .
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8011
+    command: >
+      sh -c "
+      while true; do
+        python -u /app/update_app.py;
+        sleep 300;  # 300 seconds (5 minutes)
+      done
+      "
+    depends_on:
+      inference:
+        condition: service_healthy
+    networks:
+      net1-worker1:
+        aliases:
+          - updater
+        ipv4_address: 172.31.0.3
+    
+  worker_topic_1:
+    container_name: net1-worker1-topic-1
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8011
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9101 \
+          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+          --topic=allora-topic-1-worker \
+          --allora-chain-key-name=net1_worker \
+          --allora-chain-restore-mnemonic=[SEED PHASE] \
+          --allora-chain-topic-id=1 \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-worker-mode=worker
+    volumes:
+      - ./worker-topic-1-data:/data
+    working_dir: /data
+    depends_on:
+      - inference
+    ports:
+      - "9101:9101"
+    networks:
+      net1-worker1:
+        aliases:
+          - worker_topic_1
+        ipv4_address: 172.31.0.21
+
+  worker_topic_3:
+    container_name: net1-worker1-topic-3
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8011
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9103 \
+          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+          --topic=allora-topic-3-worker \
+          --allora-chain-key-name=net1_worker \
+          --allora-chain-restore-mnemonic='SEED PHASE' \
+          --allora-chain-topic-id=3 \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-worker-mode=worker
+    volumes:
+      - ./worker-topic-3-data:/data
+    working_dir: /data
+    depends_on:
+      - inference
+    ports:
+      - "9103:9103"
+    networks:
+      net1-worker1:
+        aliases:
+          - worker_topic_3
+        ipv4_address: 172.31.0.23
+
+  worker_topic_5:
+    container_name: net1-worker1-topic-5
+    environment:
+      - INFERENCE_API_ADDRESS=http://inference:8011
+      - HOME=/data
+    build:
+      context: .
+      dockerfile: Dockerfile_b7s
+    entrypoint:
+      - "/bin/bash"
+      - "-c"
+      - |
+        if [ ! -f /data/keys/priv.bin ]; then
+          echo "Generating new private keys..."
+          mkdir -p /data/keys
+          cd /data/keys
+          allora-keys
+        fi
+        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin --log-level=debug --port=9105 \
+          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+          --topic=allora-topic-5-worker \
+          --allora-chain-key-name=net1_worker \
+          --allora-chain-restore-mnemonic=[SEED PHASE] \
+          --allora-chain-topic-id=5 \
+          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-chain-worker-mode=worker
+    volumes:
+      - ./worker-topic-5-data:/data
+    working_dir: /data
+    depends_on:
+      - inference
+    ports:
+      - "9105:9105"
+    networks:
+      net1-worker1:
+        aliases:
+          - worker_topic_5
+        ipv4_address: 172.31.0.25
+  
+networks:
+  net1-worker1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.31.0.0/24
+
+volumes:
+  inference-data:
+  worker-topic-1-data:
+  worker-topic-3-data:
+  worker-topic-5-data:
