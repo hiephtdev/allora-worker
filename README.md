@@ -102,11 +102,11 @@ docker logs net1-worker1-topic-1 -f
 ```
 
 ```bash
-docker logs net1-worker1-topic-2 -f
+docker logs net1-worker1-topic-3 -f
 ```
 
 ```bash
-docker logs net1-worker1-topic-3 -f
+docker logs net1-worker1-topic-5 -f
 ```
 
 Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
