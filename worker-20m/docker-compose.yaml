@@ -114,7 +114,7 @@ services:
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
           --allora-chain-worker-mode=worker
     volumes:
-      - ./worker-topic-3-data:/data
+      - ./worker-topic-8-data:/data
     working_dir: /data
     depends_on:
       - inference
