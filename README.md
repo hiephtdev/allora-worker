@@ -1,6 +1,12 @@
 # HƯỚNG DẪN CÀI ĐẶT ALLORA WORKER
 
-## 1. Cài đặt môi trường
+## 2. clone code tại repo này về
+
+```bash
+git clone https://github.com/hiephtdev/allora-worker
+```
+
+## 2. Cài đặt môi trường
 
 ```bash
 curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/scripts/init.sh | bash
@@ -32,7 +38,7 @@ Kiểm tra version allocmd => ra phiên bản 2.0.10
 allocmd --version
 ```
 
-## 2. Đổi lại SEED PHASE
+## 3. Đổi lại SEED PHASE
 
 - Đổi lại worker-10m
 
@@ -48,11 +54,11 @@ nano worker-10m/docker-compose.yaml
 nano worker-24h/docker-compose.yaml
 ```
 
-## 3. Tiến hành faucet
+## 4. Tiến hành faucet
 
 Vào link và paste địa chỉ ví allora dạng `allo1jzvjewf0...`  [https://faucet.testnet-1.testnet.allora.network/](https://faucet.testnet-1.testnet.allora.network/)
 
-## Chạy worker
+## 5. Chạy worker
 
 - Chạy worker 10m => đợi khi nào báo thành công hết thì là chạy xong
 
