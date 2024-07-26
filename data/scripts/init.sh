@@ -31,6 +31,6 @@ pip install allocmd --upgrade --no-input
 # Cài đặt Allora
 curl -sSL https://raw.githubusercontent.com/allora-network/allora-chain/main/install.sh | bash -s -- v0.2.11
 
-# Cập nhật PATH cho pip
-echo 'export PATH="$PATH:/root/.local/bin"' >> ~/.bashrc
+# Cập nhật PATH
+echo "export PATH=$PATH:/root/.local/bin" >> ~/.bashrc
 source ~/.bashrc
