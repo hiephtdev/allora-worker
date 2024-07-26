@@ -23,7 +23,7 @@ go version
 Kiểm tra version docker
 
 ```bash
-go version
+docker -v
 ```
 
 Kiểm tra version allorad => ra dòng trắng, không báo lỗi là đúng
