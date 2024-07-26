@@ -12,7 +12,7 @@ services:
       net1-worker3:
         aliases:
           - inference
-        ipv4_address: 172.31.0.2
+        ipv4_address: 172.33.0.2
     healthcheck:
       # test: ["CMD", "curl", "-f", "http://localhost:8011/inference/ETH"]
       test: ["CMD-SHELL", "curl -f http://localhost:8012/inference/ETH || exit 1 && curl -f http://localhost:8012/inference/BNB || exit 1 && curl -f http://localhost:8012/inference/ARB || exit 1"]
@@ -42,7 +42,7 @@ services:
       net1-worker3:
         aliases:
           - updater
-        ipv4_address: 172.31.0.3
+        ipv4_address: 172.33.0.3
     
   worker_topic_7:
     container_name: net1-worker3-topic-7
@@ -83,7 +83,7 @@ services:
       net1-worker3:
         aliases:
           - worker_topic_7
-        ipv4_address: 172.31.0.21
+        ipv4_address: 172.33.0.21
 
   worker_topic_8:
     container_name: net1-worker3-topic-8
@@ -124,7 +124,7 @@ services:
       net1-worker3:
         aliases:
           - worker_topic_3
-        ipv4_address: 172.31.0.23
+        ipv4_address: 172.33.0.23
 
   worker_topic_9:
     container_name: net1-worker3-topic-9
@@ -165,14 +165,14 @@ services:
       net1-worker3:
         aliases:
           - worker_topic_9
-        ipv4_address: 172.31.0.25
+        ipv4_address: 172.33.0.25
   
 networks:
   net1-worker3:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.31.0.0/24
+        - subnet: 172.33.0.0/24
 
 volumes:
   inference-data:
