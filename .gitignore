@@ -5,7 +5,6 @@ __pycache__
 logs/*
 .env
 keys
-data
 inference-data
 worker-data
 head-data
