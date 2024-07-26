@@ -1,6 +1,6 @@
 # HƯỚNG DẪN CÀI ĐẶT ALLORA WORKER
 
-## 2. clone code tại repo này về
+## 1. Clone code tại repo này về
 
 ```bash
 git clone https://github.com/hiephtdev/allora-worker
