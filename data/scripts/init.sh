@@ -34,19 +34,3 @@ curl -sSL https://raw.githubusercontent.com/allora-network/allora-chain/main/ins
 # Cập nhật PATH cho pip
 echo 'export PATH="$PATH:/root/.local/bin"' >> ~/.bashrc
 source ~/.bashrc
-
-# Tạo thư mục cho worker-10m
-mkdir -p worker-10m/worker-topic-1-data
-chmod 777 worker-10m/worker-topic-1-data
-mkdir -p worker-10m/worker-topic-3-data
-chmod 777 worker-10m/worker-topic-3-data
-mkdir -p worker-10m/worker-topic-5-data
-chmod 777 worker-10m/worker-topic-5-data
-
-# Tạo thư mục cho worker-24h
-mkdir -p worker-24h/worker-topic-2-data
-chmod 777 worker-24h/worker-topic-2-data
-mkdir -p worker-24h/worker-topic-4-data
-chmod 777 worker-24h/worker-topic-4-data
-mkdir -p worker-24h/worker-topic-6-data
-chmod 777 worker-24h/worker-topic-6-data
