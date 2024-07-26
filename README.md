@@ -268,6 +268,18 @@ nano docker-compose.yaml
 
 Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
 
+Vào trang [https://developer.upshot.xyz/](https://developer.upshot.xyz/) đăng ký lấy API
+
+Sửa API Key trong `main.py`
+
+```bash
+nano main.py
+```
+
+Tìm đến `API_KEY = 'UP-'  # Replace with your actual API key` thay thế UP- bằng API key lấy được ở trên
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
 Chạy worker
 
 ```bash
