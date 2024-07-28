@@ -44,8 +44,8 @@ services:
           - updater
         ipv4_address: 172.31.0.3
     
-  worker_topic_1:
-    container_name: net1-worker1-topic-1
+  allora-topic-01:
+    container_name: allora-topic-01
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8011
       - HOME=/data
@@ -67,7 +67,7 @@ services:
           --private-key=/data/keys/priv.bin --log-level=debug --port=9101 \
           --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
           --topic=allora-topic-1-worker \
-          --allora-chain-key-name=net1_worker \
+          --allora-chain-key-name=allora-topic-01 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=1 \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
@@ -85,8 +85,8 @@ services:
           - worker_topic_1
         ipv4_address: 172.31.0.21
 
-  worker_topic_3:
-    container_name: net1-worker1-topic-3
+  allora-topic-03:
+    container_name: allora-topic-03
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8011
       - HOME=/data
@@ -108,7 +108,7 @@ services:
           --private-key=/data/keys/priv.bin --log-level=debug --port=9103 \
           --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
           --topic=allora-topic-3-worker \
-          --allora-chain-key-name=net1_worker \
+          --allora-chain-key-name=allora-topic-03 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=3 \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
@@ -126,8 +126,8 @@ services:
           - worker_topic_3
         ipv4_address: 172.31.0.23
 
-  worker_topic_5:
-    container_name: net1-worker1-topic-5
+  allora-topic-05:
+    container_name: allora-topic-05
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8011
       - HOME=/data
@@ -149,7 +149,7 @@ services:
           --private-key=/data/keys/priv.bin --log-level=debug --port=9105 \
           --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
           --topic=allora-topic-5-worker \
-          --allora-chain-key-name=net1_worker \
+          --allora-chain-key-name=allora-topic-05 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=5 \
           --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \

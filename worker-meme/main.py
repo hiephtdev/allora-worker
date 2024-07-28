@@ -1,7 +1,9 @@
 import requests
 import sys
 import json
+import os
 
+INFERENCE_ADDRESS = os.environ["INFERENCE_API_ADDRESS"]
 API_KEY = 'UP-'  # Replace with your actual API key
 
 def get_token_details(block_height):
@@ -13,10 +15,20 @@ def get_token_details(block_height):
     response = requests.get(url, headers=headers)
     return response.json()
 
-def process(block_height):
+def get_token_symbol(block_height):
     token_details = get_token_details(block_height)
-    # Assuming token_details contains a 'price' field or similar for prediction
-    return token_details.get('price', 'No price found')
+    if token_details is None or 'data' not in token_details:
+        return None
+    if token_details['status'] is not True:
+        return None
+    if 'token_symbol' not in token_details['data']:
+        return None
+    return token_details['data']['token_symbol']
+
+def process(token_name):
+    response = requests.get(f"{INFERENCE_ADDRESS}/inference/{token_name}")
+    content = response.text
+    return content
 
 if __name__ == "__main__":
     try:
@@ -28,9 +40,15 @@ if __name__ == "__main__":
             blockHeightEval = sys.argv[3]
             default_arg = sys.argv[4]
 
-            response_inference = process(block_height=blockHeight)
-            response_dict = {"infererValue": response_inference}
-            value = json.dumps(response_dict)
+            token_name = get_token_symbol(blockHeight)
+            if token_name is None or token_name == "":
+                response_inference = 0
+                response_dict = {"infererValue": response_inference}
+                value = json.dumps(response_dict)
+            else:
+                response_inference = process(token_name=token_name)
+                response_dict = {"infererValue": response_inference}
+                value = json.dumps(response_dict)
     except Exception as e:
         value = json.dumps({"error": str(e)})
     print(value)
