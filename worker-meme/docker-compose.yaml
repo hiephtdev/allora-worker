@@ -5,7 +5,7 @@ services:
     container_name: net1-worker4-inference
     build:
       context: .
-    command: python -u /app/app.py
+    command: gunicorn -w 4 -b 0.0.0.0:8013 app:app
     ports:
       - "8013:8013"
     networks:
@@ -15,7 +15,7 @@ services:
         ipv4_address: 172.34.0.2
     healthcheck:
       # test: ["CMD", "curl", "-f", "http://localhost:8010/inference/ETH"] "BOME", "BOND", "DOGE", "WIF", "MEW", "MEME"
-      test: ["CMD-SHELL", "curl -f http://localhost:8010/inference/BOME || exit 1 && curl -f http://localhost:8010/inference/BOND || exit 1 && curl -f http://localhost:8010/inference/DOGE || exit 1 && curl -f http://localhost:8010/inference/WIF || exit 1 && curl -f http://localhost:8010/inference/MEW || exit 1 && curl -f http://localhost:8010/inference/MEME || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8013/inference/BOME || exit 1 && curl -f http://localhost:8013/inference/BOND || exit 1 && curl -f http://localhost:8013/inference/DOGE || exit 1 && curl -f http://localhost:8013/inference/WIF || exit 1 && curl -f http://localhost:8013/inference/MEW || exit 1 && curl -f http://localhost:8013/inference/MEME || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12

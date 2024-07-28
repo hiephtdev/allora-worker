@@ -4,7 +4,7 @@ import json
 import os
 
 INFERENCE_ADDRESS = os.environ["INFERENCE_API_ADDRESS"]
-API_KEY = 'UP-'  # Replace with your actual API key
+API_KEY = 'UP-9c8c9439cc87403a8ff447f5'  # Replace with your actual API key
 
 def get_token_details(block_height):
     url = f"https://api.upshot.xyz/v2/allora/tokens-oracle/token/{block_height}"
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
             token_name = get_token_symbol(blockHeight)
             if token_name is None or token_name == "":
-                response_inference = 0
+                response_inference = "0.00000001"
                 response_dict = {"infererValue": response_inference}
                 value = json.dumps(response_dict)
             else:

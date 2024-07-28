@@ -55,8 +55,10 @@ def download_mexc_minute_data(symbols, interval, year, month, download_path):
         for mexc_item in mexc_items:
             if mexc_item['id'] is None:
                 continue
+            mexcid = mexc_item['id']
+            symbol = mexc_item['symbol']
             for day in range(1, 32):  # Assuming days range from 1 to 31
-                url = f"{base_url}/{mexc_item['id']}/daily/{interval}/{mexc_item["symbol"]}-{interval}-{year}-{month:02d}-{day:02d}.csv"
+                url = f"{base_url}/{mexcid}/daily/{interval}/{symbol}-{interval}-{year}-{month:02d}-{day:02d}.csv"
                 executor.submit(download_url, url, download_path)
               
 def download_binance_minute_data(cm_or_um, symbols, interval, year, month, download_path):
