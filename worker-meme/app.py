@@ -32,7 +32,7 @@ def get_inference(token):
  
     # get the data from Coingecko
     # here we'll use last 30 days of BTC/USD
-    url = f"https://api.coingecko.com/api/v3/coins/{token}/market_chart?vs_currency=usd&days=30&interval=daily"
+    url = f"https://api.coingecko.com/api/v3/coins/{token}/market_chart?vs_currency=usd&days=1&interval=daily"
  
     headers = {
         "accept": "application/json",
