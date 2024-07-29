@@ -26,7 +26,8 @@ def get_token_symbol(block_height):
     return token_details['data']['token_symbol']
 
 def process(token_name):
-    response = requests.get(f"{INFERENCE_ADDRESS}/inference/{token_name}")
+    headers = {'Content-Type': 'application/json'}
+    response = requests.get(f"{INFERENCE_ADDRESS}/inference/{token_name}", headers=headers)
     content = response.text
     return content
 
