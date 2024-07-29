@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_inference
-    command: python -u /app/app.py
     ports:
       - "8013:8013"
 
