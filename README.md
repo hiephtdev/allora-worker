@@ -260,7 +260,7 @@ mkdir -p worker-topic-10-data
 chmod 777 worker-topic-10-data
 ```
 
-Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
+Sửa lại file docker compose thêm MNEMONIC (nếu chưa sửa ở 2)
 
 ```bash
 nano docker-compose.yaml
