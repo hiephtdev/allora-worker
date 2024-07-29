@@ -13,6 +13,9 @@ services:
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8013
       - HOME=/data
+      - BOOT_NODES_URL=https://raw.githubusercontent.com/allora-network/networks/main/allora-testnet-1/heads.txt
+      - ALLORA_RPC=https://allora-rpc.testnet-1.testnet.allora.network/
+      - MNEMONIC=''
     build:
       context: .
     entrypoint:
@@ -25,15 +28,21 @@ services:
           cd /data/keys
           allora-keys
         fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9110 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+        allora-node \
+          --role=worker \
+          --peer-db=/data/peerdb \
+          --function-db=/data/function-db \
+          --runtime-path=/app/runtime \
+          --runtime-cli=bls-runtime \
+          --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin \
+          --log-level=debug --port=9110 \
+          --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-10-worker \
           --allora-chain-key-name=allora-topic-10 \
-          --allora-chain-restore-mnemonic='[SEED PHASE]' \
+          --allora-chain-restore-mnemonic=$${MNEMONIC} \
           --allora-chain-topic-id=10 \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
     volumes:
       - ./worker-topic-10-data:/data
