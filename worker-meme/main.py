@@ -23,7 +23,7 @@ def get_token_symbol(block_height):
         return None
     if 'token_symbol' not in token_details['data']:
         return None
-    return token_details['data']['token_symbol']
+    return token_details['data']['token_id']
 
 def process(token_name):
     headers = {'Content-Type': 'application/json'}
