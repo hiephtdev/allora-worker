@@ -15,7 +15,6 @@ services:
       - HOME=/data
       - BOOT_NODES_URL=https://raw.githubusercontent.com/allora-network/networks/main/allora-testnet-1/heads.txt
       - ALLORA_RPC=https://allora-rpc.testnet-1.testnet.allora.network/
-      - MNEMONIC=''
     build:
       context: .
     entrypoint:
@@ -40,7 +39,7 @@ services:
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-10-worker \
           --allora-chain-key-name=allora-topic-10 \
-          --allora-chain-restore-mnemonic=$${MNEMONIC} \
+          --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=10 \
           --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
