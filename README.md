@@ -260,7 +260,7 @@ mkdir -p worker-topic-10-data
 chmod 777 worker-topic-10-data
 ```
 
-Sửa lại file docker compose thêm MNEMONIC (nếu chưa sửa ở 2)
+Sửa lại file docker compose đổi lại SEED PHARSE (nếu chưa sửa ở 2)
 
 ```bash
 nano docker-compose.yaml
@@ -277,6 +277,18 @@ nano main.py
 ```
 
 Tìm đến `API_KEY = 'UP-'  # Replace with your actual API key` thay thế UP- bằng API key lấy được ở trên
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
+Vào trang [https://www.coingecko.com/en/developers/dashboard](https://www.coingecko.com/en/developers/dashboard) đăng ký lấy API
+
+Sửa API Key trong `app.py`
+
+```bash
+nano app.py
+```
+
+Tìm đến `coingecko_api_key = ""` thay thế bằng API key lấy được ở trên
 
 Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
 

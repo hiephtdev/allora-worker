@@ -11,6 +11,7 @@ app = Flask(__name__)
 # define the Hugging Face model we will use
 model_name = "amazon/chronos-t5-tiny"
  
+# Fill your API key
 coingecko_api_key = ""
  
 # define our endpoint
@@ -36,7 +37,7 @@ def get_inference(token):
  
     headers = {
         "accept": "application/json",
-        "x-cg-demo-api-key": coingecko_api_key # replace with your API key
+        "x-cg-demo-api-key": coingecko_api_key
     }
  
     response = requests.get(url, headers=headers)

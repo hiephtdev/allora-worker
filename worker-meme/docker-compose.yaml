@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile_inference
     ports:
       - "8013:8013"
+    restart: unless-stopped
 
   allora-topic-10:
     container_name: allora-topic-10
@@ -21,6 +22,10 @@ services:
       - "/bin/bash"
       - "-c"
       - |
+        set -ex
+        # Define my public IP for dialback address
+        MY_IP=$(curl -4 icanhazip.com)
+
         if [ ! -f /data/keys/priv.bin ]; then
           echo "Generating new private keys..."
           mkdir -p /data/keys
@@ -35,7 +40,8 @@ services:
           --runtime-cli=bls-runtime \
           --workspace=/data/workspace \
           --private-key=/data/keys/priv.bin \
-          --log-level=debug --port=9110 \
+          --log-level=debug \
+          --port=9110 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-10-worker \
           --allora-chain-key-name=allora-topic-10 \
@@ -43,6 +49,8 @@ services:
           --allora-chain-topic-id=10 \
           --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
+          --dialback-address=$${MY_IP} \
+          --dialback-port=9110 \
     volumes:
       - ./worker-topic-10-data:/data
     working_dir: /data
@@ -50,5 +58,7 @@ services:
       - inference
     ports:
       - "9110:9110"
+      - "2112:2112" # expose metrics port
+    restart: unless-stopped
 volumes:
   worker-topic-10-data:

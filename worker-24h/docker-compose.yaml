@@ -2,10 +2,9 @@ version: '3'
 
 services:
   inference:
-    container_name: net1-worker2-inference
+    container_name: worker-24h-inference
     build:
       context: .
-    command: python -u /app/app.py
     ports:
       - "8010:8010"
     networks:
@@ -13,42 +12,15 @@ services:
         aliases:
           - inference
         ipv4_address: 172.32.0.2
-    healthcheck:
-      # test: ["CMD", "curl", "-f", "http://localhost:8010/inference/ETH"]
-      test: ["CMD-SHELL", "curl -f http://localhost:8010/inference/ETH || exit 1 && curl -f http://localhost:8010/inference/BTC || exit 1 && curl -f http://localhost:8010/inference/SOL || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 12
-      start_period: 300s
-    volumes:
-      - ./inference-data:/app/data
-  
-  updater:
-    container_name: net1-updater2
-    build: .
-    environment:
-      - INFERENCE_API_ADDRESS=http://inference:8010
-    command: >
-      sh -c "
-      while true; do
-        python -u /app/update_app.py;
-        sleep 12h;
-      done
-      "
-    depends_on:
-      inference:
-        condition: service_healthy
-    networks:
-      net1-worker2:
-        aliases:
-          - updater
-        ipv4_address: 172.32.0.3
+    restart: unless-stopped
     
   allora-topic-02:
     container_name: allora-topic-02
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8010
       - HOME=/data
+      - BOOT_NODES_URL=https://raw.githubusercontent.com/allora-network/networks/main/allora-testnet-1/heads.txt
+      - ALLORA_RPC=https://allora-rpc.testnet-1.testnet.allora.network/
     build:
       context: .
       dockerfile: Dockerfile_b7s
@@ -56,21 +28,32 @@ services:
       - "/bin/bash"
       - "-c"
       - |
+        set -ex
+        # Define my public IP for dialback address
+        MY_IP=$(curl -4 icanhazip.com)
+
         if [ ! -f /data/keys/priv.bin ]; then
           echo "Generating new private keys..."
           mkdir -p /data/keys
           cd /data/keys
           allora-keys
         fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9102 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+        allora-node --role=worker \
+          --peer-db=/data/peerdb \
+          --function-db=/data/function-db \
+          --runtime-path=/app/runtime --runtime-cli=bls-runtime \
+          --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin \
+          --log-level=debug \
+          --port=9102 \
+          --dialback-address=$${MY_IP} \
+          --dialback-port=9102 \
+          --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-2-worker \
           --allora-chain-key-name=allora-topic-02 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=2 \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
     volumes:
       - ./worker-topic-2-data:/data
@@ -84,12 +67,15 @@ services:
         aliases:
           - worker_topic_2
         ipv4_address: 172.32.0.21
+    restart: unless-stopped
 
   allora-topic-04:
     container_name: allora-topic-04
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8010
       - HOME=/data
+      - BOOT_NODES_URL=https://raw.githubusercontent.com/allora-network/networks/main/allora-testnet-1/heads.txt
+      - ALLORA_RPC=https://allora-rpc.testnet-1.testnet.allora.network/
     build:
       context: .
       dockerfile: Dockerfile_b7s
@@ -97,21 +83,33 @@ services:
       - "/bin/bash"
       - "-c"
       - |
+        set -ex
+        # Define my public IP for dialback address
+        MY_IP=$(curl -4 icanhazip.com)
+
         if [ ! -f /data/keys/priv.bin ]; then
           echo "Generating new private keys..."
           mkdir -p /data/keys
           cd /data/keys
           allora-keys
         fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9104 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+        allora-node --role=worker \
+          --peer-db=/data/peerdb \
+          --function-db=/data/function-db \
+          --runtime-path=/app/runtime \
+          --runtime-cli=bls-runtime \
+          --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin \
+          --log-level=debug \
+          --port=9104 \
+          --dialback-address=$${MY_IP} \
+          --dialback-port=9104 \
+          --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-4-worker \
           --allora-chain-key-name=allora-topic-04 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=4 \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
     volumes:
       - ./worker-topic-4-data:/data
@@ -125,12 +123,15 @@ services:
         aliases:
           - worker_topic_4
         ipv4_address: 172.32.0.23
+    restart: unless-stopped
 
   allora-topic-06:
     container_name: allora-topic-06
     environment:
       - INFERENCE_API_ADDRESS=http://inference:8010
       - HOME=/data
+      - BOOT_NODES_URL=https://raw.githubusercontent.com/allora-network/networks/main/allora-testnet-1/heads.txt
+      - ALLORA_RPC=https://allora-rpc.testnet-1.testnet.allora.network/
     build:
       context: .
       dockerfile: Dockerfile_b7s
@@ -138,21 +139,33 @@ services:
       - "/bin/bash"
       - "-c"
       - |
+        set -ex
+        # Define my public IP for dialback address
+        MY_IP=$(curl -4 icanhazip.com)
+
         if [ ! -f /data/keys/priv.bin ]; then
           echo "Generating new private keys..."
           mkdir -p /data/keys
           cd /data/keys
           allora-keys
         fi
-        allora-node --role=worker --peer-db=/data/peerdb --function-db=/data/function-db \
-          --runtime-path=/app/runtime --runtime-cli=bls-runtime --workspace=/data/workspace \
-          --private-key=/data/keys/priv.bin --log-level=debug --port=9106 \
-          --boot-nodes=/dns/head-0-p2p.testnet-1.testnet.allora.network/tcp/32130/p2p/12D3KooWLBhsSucVVcyVCaM9pvK8E7tWBM9L19s7XQHqqejyqgEC,/dns/head-1-p2p.testnet-1.testnet.allora.network/tcp/32131/p2p/12D3KooWEUNWg7YHeeCtH88ju63RBfY5hbdv9hpv84ffEZpbJszt,/dns/head-2-p2p.testnet-1.testnet.allora.network/tcp/32132/p2p/12D3KooWATfUSo95wtZseHbogpckuFeSvpL4yks6XtvrjVHcCCXk,/dns/head-5-p2p.testnet-1.testnet.allora.network/tcp/32135/p2p/12D3KooWAazxKoYszYt4XhCrGWoEUyAFMaU7DB9RZ8TsA7qwLfin,/dns/head-4-p2p.testnet-1.testnet.allora.network/tcp/32134/p2p/12D3KooWRF8HNU21AukE7KC6kZqxqvCiZ5nM9xcLW4YvsuGAYbcm,/dns/head-3-p2p.testnet-1.testnet.allora.network/tcp/32133/p2p/12D3KooWDrArwBSCNxwL3mgJ2NaUygdtPtiwVQtPJafyAH6FSiUf \
+        allora-node --role=worker \
+          --peer-db=/data/peerdb \
+          --function-db=/data/function-db \
+          --runtime-path=/app/runtime \
+          --runtime-cli=bls-runtime \
+          --workspace=/data/workspace \
+          --private-key=/data/keys/priv.bin \
+          --log-level=debug \
+          --port=9106 \
+          --dialback-address=$${MY_IP} \
+          --dialback-port=9106 \
+          --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-6-worker \
           --allora-chain-key-name=allora-topic-06 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=6 \
-          --allora-node-rpc-address=https://allora-rpc.testnet-1.testnet.allora.network \
+          --allora-node-rpc-address=$${ALLORA_RPC} \
           --allora-chain-worker-mode=worker
     volumes:
       - ./worker-topic-6-data:/data
@@ -166,6 +179,7 @@ services:
         aliases:
           - worker_topic_6
         ipv4_address: 172.32.0.25
+    restart: unless-stopped
   
 networks:
   net1-worker2:
