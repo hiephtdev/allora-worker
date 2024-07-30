@@ -108,15 +108,15 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs net1-worker1-topic-1 -f
+docker logs allora-topic-1 -f
 ```
 
 ```bash
-docker logs net1-worker1-topic-3 -f
+docker logs allora-topic-3 -f
 ```
 
 ```bash
-docker logs net1-worker1-topic-5 -f
+docker logs allora-topic-5 -f
 ```
 
 Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
@@ -128,7 +128,7 @@ Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
 
 ```bash
-docker restart logs net1-worker1-topic-1 net1-worker1-topic-2 net1-worker1-topic-3
+docker restart logs allora-topic-1 allora-topic-3 allora-topic-5
 ```
 
 Tiếp theo lặp lại lệnh kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
@@ -160,6 +160,18 @@ nano docker-compose.yaml
 
 Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
 
+Vào trang [https://www.coingecko.com/en/developers/dashboard](https://www.coingecko.com/en/developers/dashboard) đăng ký lấy API
+
+Sửa API Key trong `app.py`
+
+```bash
+nano app.py
+```
+
+Tìm đến `coingecko_api_key = ""` thay thế bằng API key lấy được ở trên
+
+Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
+
 Chạy worker
 
 ```bash
@@ -169,27 +181,27 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs net1-worker2-topic-2 -f
+docker logs allora-topic-2 -f
 ```
 
 ```bash
-docker logs net1-worker2-topic-4 -f
+docker logs allora-topic-4 -f
 ```
 
 ```bash
-docker logs net1-worker2-topic-6 -f
+docker logs allora-topic-6 -f
 ```
 
-Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-6 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-6 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker restart net1-worker2-topic-2 net1-worker2-topic-4 net1-worker2-topic-6
+docker restart allora-topic-2 allora-topic-4 allora-topic-6
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
@@ -230,27 +242,27 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs net1-worker3-topic-7 -f
+docker logs allora-topic-7 -f
 ```
 
 ```bash
-docker logs net1-worker3-topic-8 -f
+docker logs allora-topic-8 -f
 ```
 
 ```bash
-docker logs net1-worker3-topic-9 -f
+docker logs allora-topic-9 -f
 ```
 
-Nếu hiện `net1-worker1-topic-7 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-7 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `net1-worker1-topic-7 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-7 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker restart net1-worker3-topic-7 net1-worker3-topic-8 net1-worker3-topic-9
+docker restart allora-topic-7 allora-topic-8 allora-topic-9
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
@@ -311,19 +323,19 @@ docker compose up -d
 Kiểm tra worker đã chạy chưa
 
 ```bash
-docker logs worker_topic_10 -f
+docker logs allora-topic-10 -f
 ```
 
-Nếu hiện `worker_topic_10 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-10 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `worker_topic_10 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-10 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker restart worker_topic_10
+docker restart allora-topic-10
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên

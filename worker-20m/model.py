@@ -17,7 +17,7 @@ binance_data_path = os.path.join(data_base_path, "binance/futures-klines")
 def download_data(token):
     cm_or_um = "um"
     symbols = [f"{token.upper()}USDT"]
-    interval = "5m"  # 5 phút
+    interval = "15m"  # 15 phút
     current_datetime = datetime.now()
     current_year = current_datetime.year
     current_month = current_datetime.month
