@@ -48,6 +48,7 @@ services:
           --port=9102 \
           --dialback-address=$${MY_IP} \
           --dialback-port=9102 \
+          --allora-chain-home-dir=/data/.allorad \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-2-worker \
           --allora-chain-key-name=allora-topic-02 \
@@ -102,6 +103,7 @@ services:
           --private-key=/data/keys/priv.bin \
           --log-level=debug \
           --port=9104 \
+          --allora-chain-home-dir=/data/.allorad \
           --dialback-address=$${MY_IP} \
           --dialback-port=9104 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
@@ -158,6 +160,7 @@ services:
           --private-key=/data/keys/priv.bin \
           --log-level=debug \
           --port=9106 \
+          --allora-chain-home-dir=/data/.allorad \
           --dialback-address=$${MY_IP} \
           --dialback-port=9106 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \

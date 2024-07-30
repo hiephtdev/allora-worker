@@ -77,6 +77,7 @@ services:
           --private-key=/data/keys/priv.bin \
           --log-level=debug \
           --port=9107 \
+          --allora-chain-home-dir=/data/.allorad \
           --dialback-address=$${MY_IP} \
           --dialback-port=9107 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
@@ -133,6 +134,7 @@ services:
           --private-key=/data/keys/priv.bin \
           --log-level=debug \
           --port=9108 \
+          --allora-chain-home-dir=/data/.allorad \
           --dialback-address=$${MY_IP} \
           --dialback-port=9108 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
@@ -189,6 +191,7 @@ services:
           --private-key=/data/keys/priv.bin \
           --log-level=debug \
           --port=9109 \
+          --allora-chain-home-dir=/data/.allorad \
           --dialback-address=$${MY_IP} \
           --dialback-port=9109 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \

@@ -44,6 +44,7 @@ services:
           --port=9110 \
           --boot-nodes=$(curl -Ls $${BOOT_NODES_URL}) \
           --topic=allora-topic-10-worker \
+          --allora-chain-home-dir=/data/.allorad \
           --allora-chain-key-name=allora-topic-10 \
           --allora-chain-restore-mnemonic='[SEED PHASE]' \
           --allora-chain-topic-id=10 \
