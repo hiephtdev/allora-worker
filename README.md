@@ -108,27 +108,27 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs allora-topic-1 -f
+docker logs allora-topic-01 -f
 ```
 
 ```bash
-docker logs allora-topic-3 -f
+docker logs allora-topic-03 -f
 ```
 
 ```bash
-docker logs allora-topic-5 -f
+docker logs allora-topic-05 -f
 ```
 
-Nếu hiện `net1-worker1-topic-3 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-05 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `net1-worker1-topic-3 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-05 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
 
 ```bash
-docker restart logs allora-topic-1 allora-topic-3 allora-topic-5
+docker restart logs allora-topic-01 allora-topic-03 allora-topic-05
 ```
 
 Tiếp theo lặp lại lệnh kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
@@ -181,27 +181,27 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs allora-topic-2 -f
+docker logs allora-topic-02 -f
 ```
 
 ```bash
-docker logs allora-topic-4 -f
+docker logs allora-topic-04 -f
 ```
 
 ```bash
-docker logs allora-topic-6 -f
+docker logs allora-topic-06 -f
 ```
 
-Nếu hiện `allora-topic-6 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-06 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `allora-topic-6 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-06 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker restart allora-topic-2 allora-topic-4 allora-topic-6
+docker restart allora-topic-02 allora-topic-04 allora-topic-06
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
@@ -242,27 +242,27 @@ docker compose up -d
 Kiểm tra từng worker đã chạy chưa
 
 ```bash
-docker logs allora-topic-7 -f
+docker logs allora-topic-07 -f
 ```
 
 ```bash
-docker logs allora-topic-8 -f
+docker logs allora-topic-08 -f
 ```
 
 ```bash
-docker logs allora-topic-9 -f
+docker logs allora-topic-09 -f
 ```
 
-Nếu hiện `allora-topic-7 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
+Nếu hiện `allora-topic-07 | 2024-07-11T13:51:50Z INF Success: register node Tx Hash:=...` => node đã đăng ký thành công lần đầu
 
-Hiện `allora-topic-7 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
+Hiện `allora-topic-07 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
 ```bash
-docker restart allora-topic-7 allora-topic-8 allora-topic-9
+docker restart allora-topic-07 allora-topic-08 allora-topic-09
 ```
 
 Tiếp theo kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
