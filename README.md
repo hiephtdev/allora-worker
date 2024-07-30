@@ -13,7 +13,14 @@ cd allora-worker
 curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/scripts/init.sh | bash
 ```
 
-Sau khi cài đặt xong gõ các lệnh dưới nếu chạy thành công là hoàn tất cài đặt môi trường
+Sau khi cài đặt xong chạy lệnh
+
+```bash
+echo "export PATH=$PATH:/root/.local/bin" >> ~/.bashrc
+source ~/.bashrc
+```
+
+Sau đó gõ các lệnh dưới nếu chạy thành công là hoàn tất cài đặt môi trường
 
 Kiểm tra version go
 
