@@ -17,6 +17,8 @@ Sau khi cài đặt xong chạy lệnh
 
 ```bash
 echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
+source ~/.bashrc
+
 echo "export PATH=$PATH:/root/.local/bin" >> ~/.bashrc
 source ~/.bashrc
 ```
