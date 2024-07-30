@@ -16,6 +16,7 @@ curl -sL1 https://raw.githubusercontent.com/hiephtdev/allora-worker/main/data/sc
 Sau khi cài đặt xong chạy lệnh
 
 ```bash
+echo "export PATH=$PATH:/usr/local/go/bin" >> ~/.bashrc
 echo "export PATH=$PATH:/root/.local/bin" >> ~/.bashrc
 source ~/.bashrc
 ```
