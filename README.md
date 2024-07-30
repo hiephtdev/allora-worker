@@ -125,7 +125,11 @@ Hiện `allora-topic-05 | 2024-07-11T14:00:06Z INF node already registered for t
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
-Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
+Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker
+
+Nhấn `Ctrl + C` để thoát khỏi màn hình logs hiện tại
+
+Worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
 
 ```bash
 docker restart logs allora-topic-01 allora-topic-03 allora-topic-05
@@ -198,7 +202,10 @@ Hiện `allora-topic-06 | 2024-07-11T14:00:06Z INF node already registered for t
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
 
+Nhấn `Ctrl + C` để thoát khỏi màn hình logs hiện tại
+
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
+
 
 ```bash
 docker restart allora-topic-02 allora-topic-04 allora-topic-06
@@ -258,6 +265,8 @@ Nếu hiện `allora-topic-07 | 2024-07-11T13:51:50Z INF Success: register node 
 Hiện `allora-topic-07 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
+
+Nhấn `Ctrl + C` để thoát khỏi màn hình logs hiện tại
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
@@ -331,6 +340,8 @@ Nếu hiện `allora-topic-10 | 2024-07-11T13:51:50Z INF Success: register node 
 Hiện `allora-topic-10 | 2024-07-11T14:00:06Z INF node already registered for topic topic=3` => node đã đăng ký rồi, tức thành công kệ nó
 
 <img src="https://github.com/hiephtdev/allora-worker/blob/main/images/Da_Dang_ky_topic_thanh_cong.png">
+
+Nhấn `Ctrl + C` để thoát khỏi màn hình logs hiện tại
 
 Nếu không hiện 2 dòng trên thì chạy lệnh dưới để restart lại worker => tương tự như worker 10m
 
