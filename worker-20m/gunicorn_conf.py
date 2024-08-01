@@ -7,6 +7,6 @@ graceful_timeout = 120
 timeout = 30
 keepalive = 5
 worker_class = "gthread"
-workers = 4
+workers = 2
 threads = 8
 bind = "0.0.0.0:8012"

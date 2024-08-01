@@ -132,7 +132,7 @@ Nhấn `Ctrl + C` để thoát khỏi màn hình logs hiện tại
 Worker nào lỗi thì restart worker đó, restart nhiều worker thì phân cách bởi dấu cách, như ở dưới là restart 3 worker
 
 ```bash
-docker restart logs allora-topic-01 allora-topic-03 allora-topic-05
+docker restart allora-topic-01 allora-topic-03 allora-topic-05
 ```
 
 Tiếp theo lặp lại lệnh kiểm tra xem node có kết nối được head không, nếu không có log gì, đứng im như ảnh => kết nối head không thành công => tiến hành restart lại như lệnh trên
