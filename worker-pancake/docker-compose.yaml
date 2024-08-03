@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  worker:
+    image: hiepht/allora-pancake:1.0.0
+    environment:
+      INFURA_PROJECT_URL: your_infura_project_url
+      CONTRACT_ADDRESS: your_contract_address
+      PRIVATE_KEY_BULL: your_private_key_bull
+      PRIVATE_KEY_BEAR: your_private_key_bear
