@@ -3,6 +3,7 @@ version: '3.8'
 services:
   worker:
     image: hiepht/allora-pancake:1.0.0
+    restart: unless-stopped
     environment:
       INFURA_PROJECT_URL: your_infura_project_url
       CONTRACT_ADDRESS: your_contract_address
