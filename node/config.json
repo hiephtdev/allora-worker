@@ -6,9 +6,9 @@
         "gas": "1000000",
         "gasAdjustment": 1.0,
         "nodeRpc": "https://sentries-rpc.testnet-1.testnet.allora.network",
-        "maxRetries": 1,
+        "maxRetries": 10,
         "delay": 1,
-        "submitTx": false
+        "submitTx": true
     },
     "worker": [
         {
