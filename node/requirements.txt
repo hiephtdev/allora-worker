@@ -10,6 +10,6 @@ flask[async]
 gunicorn[gthread]
 retrying==1.3.3
 requests
-torch==2.0.1+cu118 -f https://download.pytorch.org/whl/torch_stable.html
+torch
 # GitHub dependency, placed at the end
 git+https://github.com/amazon-science/chronos-forecasting.git
