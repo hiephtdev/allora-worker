@@ -1,0 +1,36 @@
+{
+    "wallet": {
+        "addressKeyName": "mysticwho",
+        "addressRestoreMnemonic": "xxx",
+        "alloraHomeDir": "",
+        "gas": "1000000",
+        "gasAdjustment": 1.0,
+        "nodeRpc": "https://sentries-rpc.testnet-1.testnet.allora.network",
+        "maxRetries": 1,
+        "delay": 1,
+        "submitTx": false
+    },
+    "worker": [
+        {
+            "topicId": 1,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-01:8001/inference/{Token}",
+                "Token": "ETH"
+            }
+        }
+    ],
+    "reputer": [
+        {
+            "topicId": 1,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-01:8001/truth/{Token}/{BlockHeight}",
+                "Token": "ETHUSD"
+            }
+        }
+    ]
+}

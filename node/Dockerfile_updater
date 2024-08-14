@@ -11,7 +11,7 @@ RUN pip install --upgrade pip setuptools \
 
 FROM project_env
 
-COPY . /app/
+COPY update_app.py /app/
 
 # Set the entrypoint command
-CMD ["gunicorn", "--conf", "/app/gunicorn_conf.py", "app:app"]
+ENTRYPOINT ["sh", "-c", "while true; sleep 60; do python -u /app/update_app.py; done"]

@@ -11,7 +11,7 @@ RUN pip install --upgrade pip setuptools \
 
 FROM project_env
 
-COPY . /app/
+COPY gunicorn_conf.py app.py /app/
 
 # Set the entrypoint command
 CMD ["gunicorn", "--conf", "/app/gunicorn_conf.py", "app:app"]

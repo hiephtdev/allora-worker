@@ -1,0 +1,42 @@
+services:
+  source-01:
+    container_name: source-01
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8001
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      # - ALLORA_VALIDATOR_API_URL=https://localhost:1317/
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+      - WORKER_TYPE=1
+      - CGC_API_KEY=CG-hEJs1AYe3r7zMa13ifMM3FKC
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./source-01-data:/app/data
+
+  updater-01:
+    container_name: updater-01
+    build:
+      context: .
+      dockerfile: Dockerfile_updater
+    depends_on:
+      - source-01
+    environment:
+      - DATA_PROVIDER_API_ADDRESS=http://source-01:8001
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+
+  node:
+    container_name: node
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-01-data:/data
+    depends_on:
+      - source-01
+    env_file:
+      - ./worker-01-data/env_file
