@@ -38,17 +38,20 @@ def fetch_data(url):
     return response.json()
 
 def check_create_table():
-    with sqlite3.connect(DATABASE_PATH) as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS prices (
-                block_height INTEGER,
-                token TEXT,
-                price REAL,
-                PRIMARY KEY (block_height, token)
-            )
-        ''')
+    try:
+        with sqlite3.connect(DATABASE_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                CREATE TABLE IF NOT EXISTS prices (
+                    block_height INTEGER,
+                    token TEXT,
+                    price REAL,
+                    PRIMARY KEY (block_height, token)
+                )
+            ''')
         print("Prices table created successfully.")
+    except sqlite3.Error as e:
+        print(f"An error occurred while creating the table: {str(e)}")
 
 @app.route('/', methods=['GET'])
 def health():
