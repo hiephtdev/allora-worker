@@ -4,6 +4,7 @@
 
 ```bash
 git clone https://github.com/hiephtdev/allora-worker
+cd allora-worker
 git fetch
 git checkout offchain-v2
 ```
@@ -30,7 +31,8 @@ Vào link và paste địa chỉ ví allora dạng `allo1jzvjewf0...`  [https://
 cd node
 
 # Tạo thư mục cho worker-10m
-chmod +x ./init.config.sh
+apt update -y && apt install -y jq
+chmod +x ./init.config.sh "01"
 ./init.config.sh
 ```
 
