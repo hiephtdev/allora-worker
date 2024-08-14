@@ -9,7 +9,7 @@ git fetch
 git checkout offchain-v2
 ```
 
-## 3. Đổi lại addressKeyName, addressRestoreMnemonic trong file node/config.json
+## 2. Đổi lại addressKeyName, addressRestoreMnemonic trong file node/config.json
 
 ```bash
 nano ./node/config.json
@@ -19,11 +19,11 @@ nano ./node/config.json
 
 - Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
 
-## 4. Tiến hành faucet
+## 3. Tiến hành faucet
 
 Vào link và paste địa chỉ ví allora dạng `allo1jzvjewf0...`  [https://faucet.testnet-1.testnet.allora.network/](https://faucet.testnet-1.testnet.allora.network/)
 
-## 5. Chạy worker
+## 4. Chạy worker
 
 - Chạy worker => đợi khi nào báo thành công hết thì là chạy xong
 
@@ -55,6 +55,6 @@ docker logs updater-01 -f
 ```bash
 docker logs node -f
 ```
-### Hoàn tất giờ đợi nổ điểm tại
+## 5. Hoàn tất giờ đợi nổ điểm tại
 
 [https://app.allora.network/points/leaderboard](https://app.allora.network/points/leaderboard)
