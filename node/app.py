@@ -21,6 +21,7 @@ HTTP_RESPONSE_CODE_200 = 200
 HTTP_RESPONSE_CODE_404 = 404
 HTTP_RESPONSE_CODE_500 = 500
 
+# Endpoint for querying the latest block
 URL_QUERY_LATEST_BLOCK = "cosmos/base/tendermint/v1beta1/blocks/latest"
 
 app = Flask(__name__)
@@ -103,15 +104,15 @@ def update_price(token_name, token_from, token_to='usd'):
 
         price = prices[token_from.lower()][token_to.lower()]
         block_data = get_latest_network_block()
-        block_height = block_data['block']['header']['height']
+        latest_block_height = block_data['block']['header']['height']
         token = token_name.lower()
 
         with sqlite3.connect(DATABASE_PATH) as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", (block_height, token, price))
+            cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", (latest_block_height, token, price))
             conn.commit()
 
-        print(f"Inserted data point {block_height} : {price}")
+        print(f"Inserted data point {latest_block_height} : {price}")
         return jsonify({'message': f'{token} price updated successfully'}), HTTP_RESPONSE_CODE_200
     except Exception as e:
         return jsonify({'error': f'Failed to update {token_name} price: {str(e)}'}), HTTP_RESPONSE_CODE_500
@@ -190,10 +191,24 @@ def get_latest_network_block():
         print(f"Latest network block URL: {url}")
         response = requests.get(url)
         response.raise_for_status()
-        return response.json()
+
+       # Handle case where the response might be a list or dictionary
+        if isinstance(response, list):
+            block_data = response.json()[0]  # Assume it's a list, get the first element
+        else:
+            block_data = response.json()  # Assume it's already a dictionary
+
+        # Safely accessing block height
+        try:
+            latest_block_height = int(block_data['block']['header']['height'])
+        except KeyError:
+            print("Error: Missing expected keys in block data.")
+            latest_block_height = 0  # Handle the error appropriately
+
+        return {'block': {'header': {'height': latest_block_height}}}
     except Exception as e:
         print(f'Failed to get block height: {str(e)}')
-        return None
+        return {}
 
 if __name__ == '__main__':
     tokens = os.environ.get('TOKENS', '').split(',')
