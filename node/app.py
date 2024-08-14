@@ -26,7 +26,7 @@ URL_QUERY_LATEST_BLOCK = "cosmos/base/tendermint/v1beta1/blocks/latest"
 
 app = Flask(__name__)
 
-# Retry decorator for network requests
+# Function to fetch data with retry
 @retrying.retry(wait_exponential_multiplier=1000, wait_exponential_max=10000, stop_max_attempt_number=5)
 def fetch_data(url):
     headers = {
@@ -37,6 +37,7 @@ def fetch_data(url):
     response.raise_for_status()
     return response.json()
 
+# Function to check and create the table if not exists
 def check_create_table():
     try:
         with sqlite3.connect(DATABASE_PATH) as conn:
@@ -53,6 +54,89 @@ def check_create_table():
     except sqlite3.Error as e:
         print(f"An error occurred while creating the table: {str(e)}")
 
+# Initialize price token function
+def init_price_token(token_name, token_from, token_to):
+    try:
+        check_create_table()
+
+        with sqlite3.connect(DATABASE_PATH) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM prices WHERE token=?", (token_name.lower(),))
+            count = cursor.fetchone()[0]
+
+        if count > 0:
+            print(f'Data already exists for {token_name} token, {count} entries')
+            return
+
+        end_date = datetime.now()
+        days = 1 if WORKER_TYPE == 1 else (90 if WORKER_TYPE == 2 else (180 if WORKER_TYPE == 3 else 1))
+        start_date = end_date - timedelta(days=days)
+
+        block_data = get_latest_network_block()
+        latest_block_height = int(block_data['block']['header']['height'])
+
+        start_date_epoch = int(start_date.timestamp())
+        end_date_epoch = int(end_date.timestamp())
+        url = f'https://api.coingecko.com/api/v3/coins/{token_from}/market_chart/range?vs_currency={token_to}&from={start_date_epoch}&to={end_date_epoch}'
+        print(f"Historical data URL: {url}")
+
+        response = fetch_data(url)
+        historical_data = response['prices']
+
+        with sqlite3.connect(DATABASE_PATH) as conn:
+            cursor = conn.cursor()
+
+            for data_point in historical_data:
+                price_timestamp = data_point[0] / 1000
+                blocks_diff = (end_date_epoch - price_timestamp) / BLOCK_TIME_SECONDS
+                block_height = int(latest_block_height - blocks_diff)
+
+                if block_height < 1:
+                    continue
+
+                price = data_point[1]
+                cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", (block_height, token_name.lower(), price))
+                print(f"Inserted data point - block {block_height} : {price}")
+
+            conn.commit()
+
+        print(f'Data initialized successfully for {token_name} token')
+    except Exception as e:
+        print(f'Failed to initialize data for {token_name} token: {str(e)}')
+        raise e
+
+# Function to get the latest network block
+def get_latest_network_block():
+    try:
+        url = f"{ALLORA_VALIDATOR_API_URL}{URL_QUERY_LATEST_BLOCK}"
+        print(f"Latest network block URL: {url}")
+        response = requests.get(url)
+        response.raise_for_status()
+        block_data = response.json()
+
+        try:
+            latest_block_height = int(block_data['block']['header']['height'])
+        except KeyError:
+            print("Error: Missing expected keys in block data.")
+            latest_block_height = 0
+
+        return {'block': {'header': {'height': latest_block_height}}}
+    except Exception as e:
+        print(f'Failed to get block height: {str(e)}')
+        return {}
+
+# Initialize tokens at the start
+tokens = os.environ.get('TOKENS', '').split(',')
+for token in tokens:
+    token_parts = token.split(':')
+    print(f"Token parts: {token_parts}")
+    if len(token_parts) == 2:
+        token_name = f"{token_parts[0]}USD"
+        token_cg_id = token_parts[1]
+        print(f"Initializing data for {token_name} token")
+        init_price_token(token_name, token_cg_id, 'usd')
+
+# Flask routes
 @app.route('/', methods=['GET'])
 def health():
     return "Hello, World, I'm alive!"
@@ -138,87 +222,5 @@ def get_price(token, block_height):
     else:
         return jsonify({'error': 'No price data found for the specified token and block_height'}), HTTP_RESPONSE_CODE_404
 
-def init_price_token(token_name, token_from, token_to):
-    try:
-        check_create_table()
-
-        with sqlite3.connect(DATABASE_PATH) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM prices WHERE token=?", (token_name.lower(),))
-            count = cursor.fetchone()[0]
-
-        if count > 0:
-            print(f'Data already exists for {token_name} token, {count} entries')
-            return
-
-        end_date = datetime.now()
-        days = 1 if WORKER_TYPE == 1 else (90 if WORKER_TYPE == 2 else (180 if WORKER_TYPE == 3 else 1))
-        start_date = end_date - timedelta(days=days)
-
-        block_data = get_latest_network_block()
-        latest_block_height = int(block_data['block']['header']['height'])
-
-        start_date_epoch = int(start_date.timestamp())
-        end_date_epoch = int(end_date.timestamp())
-        url = f'https://api.coingecko.com/api/v3/coins/{token_from}/market_chart/range?vs_currency={token_to}&from={start_date_epoch}&to={end_date_epoch}'
-        print(f"Historical data URL: {url}")
-
-        response = fetch_data(url)
-        historical_data = response['prices']
-
-        with sqlite3.connect(DATABASE_PATH) as conn:
-            cursor = conn.cursor()
-
-            for data_point in historical_data:
-                price_timestamp = data_point[0] / 1000
-                blocks_diff = (end_date_epoch - price_timestamp) / BLOCK_TIME_SECONDS
-                block_height = int(latest_block_height - blocks_diff)
-
-                if block_height < 1:
-                    continue
-
-                price = data_point[1]
-                cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", (block_height, token_name.lower(), price))
-                print(f"Inserted data point - block {block_height} : {price}")
-
-            conn.commit()
-
-        print(f'Data initialized successfully for {token_name} token')
-    except Exception as e:
-        print(f'Failed to initialize data for {token_name} token: {str(e)}')
-        raise e
-
-def get_latest_network_block():
-    try:
-        url = f"{ALLORA_VALIDATOR_API_URL}{URL_QUERY_LATEST_BLOCK}"
-        print(f"Latest network block URL: {url}")
-        response = requests.get(url)
-        response.raise_for_status()
-
-       # Handle case where the response might be a list or dictionary
-        if isinstance(response, list):
-            block_data = response.json()[0]  # Assume it's a list, get the first element
-        else:
-            block_data = response.json()  # Assume it's already a dictionary
-
-        # Safely accessing block height
-        try:
-            latest_block_height = int(block_data['block']['header']['height'])
-        except KeyError:
-            print("Error: Missing expected keys in block data.")
-            latest_block_height = 0  # Handle the error appropriately
-
-        return {'block': {'header': {'height': latest_block_height}}}
-    except Exception as e:
-        print(f'Failed to get block height: {str(e)}')
-        return {}
-
 if __name__ == '__main__':
-    tokens = os.environ.get('TOKENS', '').split(',')
-    for token in tokens:
-        token_parts = token.split(':')
-        if len(token_parts) == 2:
-            token_name = f"{token_parts[0]}USD"
-            token_cg_id = token_parts[1]
-            init_price_token(token_name, token_cg_id, 'usd')
     app.run(host='0.0.0.0', port=API_PORT)

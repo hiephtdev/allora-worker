@@ -19,6 +19,7 @@ services:
       retries: 5
     volumes:
       - ./source-01-data:/app/data
+    restart: unless-stopped
 
   updater-01:
     container_name: updater-01
@@ -30,6 +31,7 @@ services:
     environment:
       - DATA_PROVIDER_API_ADDRESS=http://source-01:8001
       - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+    restart: unless-stopped
 
   node:
     container_name: node
@@ -40,3 +42,4 @@ services:
       - source-01
     env_file:
       - ./worker-01-data/env_file
+    restart: unless-stopped
