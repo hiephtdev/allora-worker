@@ -37,6 +37,33 @@
                 "InferenceEndpoint": "http://source-01:8001/inference/{Token}",
                 "Token": "SOL"
             }
+        },
+        {
+            "topicId": 7,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "ETH"
+            }
+        },
+        {
+            "topicId": 8,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "BNB"
+            }
+        },
+        {
+            "topicId": 9,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "ARB"
+            }
         }
     ],
     "reputer": [
@@ -68,6 +95,36 @@
             "parameters": {
                 "SourceOfTruthEndpoint": "http://source-01:8001/truth/{Token}/{BlockHeight}",
                 "Token": "SOLUSD"
+            }
+        },
+        {
+            "topicId": 7,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "ETHUSD"
+            }
+        },
+        {
+            "topicId": 8,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "BNBUSD"
+            }
+        },
+        {
+            "topicId": 9,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "ARBUSD"
             }
         }
     ]

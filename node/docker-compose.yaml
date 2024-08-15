@@ -6,10 +6,9 @@ services:
       - DATABASE_PATH=/app/data/prices.db
       - API_PORT=8001
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
-      # - ALLORA_VALIDATOR_API_URL=https://localhost:1317/
       - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
-      - WORKER_TYPE=1
       - CGC_API_KEY=your_cgc_api_key
+      - INTERVAL_STEPS=10
     ports:
       - "8001:8001"
     healthcheck:
@@ -18,19 +17,43 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./source-01-data:/app/data
+      - ./source-data:/app/data
     restart: unless-stopped
 
-  updater-01:
-    container_name: updater-01
+  source-02:
+    container_name: source-02
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8002
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - TOKENS=BNB:bnb,ARB:arbitrum
+      - CGC_API_KEY=your_cgc_api_key
+      - INTERVAL_STEPS=20
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./source-data:/app/data
+    restart: unless-stopped
+
+  updater:
+    container_name: updater
     build:
       context: .
       dockerfile: Dockerfile_updater
-    depends_on:
-      - source-01
+    entrypoint: ["sh", "-c", "while true; sleep 60; do python -u /app/update_app.py; done"]
     environment:
-      - DATA_PROVIDER_API_ADDRESS=http://source-01:8001
-      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:bnb,ARB:arbitrum
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - DATABASE_PATH=/app/data/prices.db
+      - CGC_API_KEY=your_cgc_api_key
+    volumes:
+      - ./source-data:/app/data
     restart: unless-stopped
 
   node:
