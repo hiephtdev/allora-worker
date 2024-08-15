@@ -14,37 +14,34 @@ chmod +x init.sh
 ./init.sh
 ```
 
-## 3. Đổi lại addressKeyName, addressRestoreMnemonic trong file node/config.json, CGC_API_KEY trong docker-compose
-
-```bash
-nano ./node/config.json
-```
-
-- Dùng bàn phím lên xuống tìm đến dòng `addressRestoreMnemonic` thay thế cụm này bằng seed phase ví của bạn, `addressKeyName` tên node
-Sau khi sửa xong nhấn Ctrl + O để lưu, sau đó Enter, tiếp đến nhấn Ctrl + X để thoát
-
-```bash
-nano ./node/docker-compose.yaml
-```
-
-- Dùng bàn phím lên xuống tìm đến dòng `CGC_API_KEY` thay thế bằng api key của bạn lấy từ coingecko
-
-- Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
-
-## 4. Tiến hành faucet
+## 3. Tiến hành faucet
 
 Vào link và paste địa chỉ ví allora dạng `allo1jzvjewf0...`  [https://faucet.testnet-1.testnet.allora.network/](https://faucet.testnet-1.testnet.allora.network/)
 
-## 5. Chạy worker
+## 4. Chạy worker
 
 - Chạy worker => đợi khi nào báo thành công hết thì là chạy xong
 
 ```bash
 cd node
+```
 
-# Tạo file config
-chmod +x ./init.config.sh
-./init.config.sh
+- Nếu lần đầu thì gõ lệnh dưới đây truyền vào `tên node`, `mnemonic - seedphase của ví`, `cgc_api_key - api key lấy từ coingecko`
+
+```bash
+./init.config.sh <node_name> <mnemonic> <cgc_api_key>
+```
+
+- Nếu không cần thay đổi gì chỉ cần tạo lại config thì gõ lệnh dưới
+
+```bash
+./init.config.sh --i
+```
+
+- Nếu cần thêm trợ giúp ở file này thì gõ
+
+```bash
+./init.config.sh --help
 ```
 
 Chạy worker
@@ -60,14 +57,14 @@ docker logs source-01 -f
 ```
 
 ```bash
-docker logs updater-01 -f
+docker logs updater -f
 ```
 
 ```bash
 docker logs node -f
 ```
 
-## 6. Hoàn tất giờ đợi nổ điểm tại
+## 5. Hoàn tất giờ đợi nổ điểm tại
 
 [https://app.allora.network/points/leaderboard](https://app.allora.network/points/leaderboard)
 
