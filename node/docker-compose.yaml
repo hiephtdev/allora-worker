@@ -37,14 +37,14 @@ services:
       retries: 5
     depends_on:
       - rpc-node
-    entrypoint: ["./wait-for-sync.sh"]
+    entrypoint: ["/node-scripts/wait-for-sync.sh"]
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
-      - ./node-scripts/wait-for-sync.sh:/wait-for-sync.sh
+      - ./node-scripts:/node-scripts
     restart: unless-stopped
 
   source-02:
@@ -65,14 +65,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    entrypoint: ["./wait-for-sync.sh"]
+    entrypoint: ["/node-scripts/wait-for-sync.sh"]
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
-      - ./node-scripts/wait-for-sync.sh:/wait-for-sync.sh
+      - ./node-scripts:/node-scripts
     restart: unless-stopped
 
   source-03:
@@ -92,14 +92,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    entrypoint: ["./wait-for-sync.sh"]
+    entrypoint: ["/node-scripts/wait-for-sync.sh"]
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
-      - ./node-scripts/wait-for-sync.sh:/wait-for-sync.sh
+      - ./node-scripts:/node-scripts
     restart: unless-stopped
 
   updater:
