@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  truth-01-eth:
+    container_name: truth-01-eth
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8001
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      # - ALLORA_VALIDATOR_API_URL=https://localhost:1317/
+      - TOKEN=ETH
+      - TOKEN_CG_ID=ethereum
+      - WORKER_TYPE=1
+      - CGC_API_KEY=your_cgc_api_key
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./truth-01-data/eth-data:/app/data
+
+  updater-01-eth:
+    container_name: updater-01-eth
+    build:
+      context: .
+      dockerfile: Dockerfile_updater
+    depends_on:
+      - truth-01-eth
+    environment:
+      - DATA_PROVIDER_API_ADDRESS=http://truth-01-eth:8001
+
+  reputer-01:
+    container_name: reputer-01
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-01-data:/data
+    depends_on:
+      - truth-01-eth
+    env_file:
+      - ./worker-01-data/env_file

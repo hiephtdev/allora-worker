@@ -1,0 +1,131 @@
+{
+    "wallet": {
+        "addressKeyName": "mysticwho",
+        "addressRestoreMnemonic": "xxx",
+        "alloraHomeDir": "",
+        "gas": "1000000",
+        "gasAdjustment": 1.0,
+        "nodeRpc": "https://sentries-rpc.testnet-1.testnet.allora.network",
+        "maxRetries": 1,
+        "delay": 1,
+        "submitTx": true
+    },
+    "worker": [
+        {
+            "topicId": 1,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-01:8001/inference/{Token}",
+                "Token": "ETH"
+            }
+        },
+        {
+            "topicId": 3,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-01:8001/inference/{Token}",
+                "Token": "BTC"
+            }
+        },
+        {
+            "topicId": 5,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-01:8001/inference/{Token}",
+                "Token": "SOL"
+            }
+        },
+        {
+            "topicId": 7,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "ETH"
+            }
+        },
+        {
+            "topicId": 8,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "BNB"
+            }
+        },
+        {
+            "topicId": 9,
+            "inferenceEntrypointName": "api-worker-reputer",
+            "loopSeconds": 5,
+            "parameters": {
+                "InferenceEndpoint": "http://source-02:8002/inference/{Token}",
+                "Token": "ARB"
+            }
+        }
+    ],
+    "reputer": [
+        {
+            "topicId": 1,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-01:8001/truth/{Token}/{BlockHeight}",
+                "Token": "ETHUSD"
+            }
+        },
+        {
+            "topicId": 3,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-01:8001/truth/{Token}/{BlockHeight}",
+                "Token": "BTCUSD"
+            }
+        },
+        {
+            "topicId": 5,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-01:8001/truth/{Token}/{BlockHeight}",
+                "Token": "SOLUSD"
+            }
+        },
+        {
+            "topicId": 7,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "ETHUSD"
+            }
+        },
+        {
+            "topicId": 8,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "BNBUSD"
+            }
+        },
+        {
+            "topicId": 9,
+            "reputerEntrypointName": "api-worker-reputer",
+            "loopSeconds": 30,
+            "minStake": 100000,
+            "parameters": {
+                "SourceOfTruthEndpoint": "http://source-02:8002/truth/{Token}/{BlockHeight}",
+                "Token": "ARBUSD"
+            }
+        }
+    ]
+}

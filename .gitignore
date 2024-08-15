@@ -9,3 +9,5 @@ inference-data
 worker-data
 head-data
 lib
+node/worker-01-data/*
+node/source-01-data/*

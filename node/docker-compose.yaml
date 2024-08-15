@@ -1,0 +1,75 @@
+services:
+  source-01:
+    container_name: source-01
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8001
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+      - INTERVAL_STEPS=10
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      gunicorn --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
+      --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
+      --worker-class gthread --workers 4 --threads 8 app:app
+    volumes:
+      - ./source-data:/app/data
+    restart: unless-stopped
+
+  source-02:
+    container_name: source-02
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8002
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - TOKENS=BNB:binancecoin,ARB:arbitrum
+      - INTERVAL_STEPS=20
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      gunicorn --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
+      --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
+      --worker-class gthread --workers 4 --threads 8 app:app
+    volumes:
+      - ./source-data:/app/data
+    restart: unless-stopped
+
+  updater:
+    container_name: updater
+    build:
+      context: .
+      dockerfile: Dockerfile_updater
+    entrypoint: ["sh", "-c", "while true; do sleep 60; python -u /app/update_app.py; done"]
+    environment:
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:binancecoin,ARB:arbitrum
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - DATABASE_PATH=/app/data/prices.db
+      - CGC_API_KEY=your_cgc_api_key
+    volumes:
+      - ./source-data:/app/data
+    restart: unless-stopped
+
+  node:
+    container_name: node
+    image: alloranetwork/allora-offchain-node:latest
+    volumes:
+      - ./worker-data:/data
+    depends_on:
+      - source-01
+      - source-02
+    env_file:
+      - ./worker-data/env_file
+    restart: unless-stopped
