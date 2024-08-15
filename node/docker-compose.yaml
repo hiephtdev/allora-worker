@@ -16,10 +16,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      python init_data.py
-      gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -41,10 +40,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      python init_data.py
-      gunicorn --preload --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -65,10 +63,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      python init_data.py
-      gunicorn --preload --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -99,20 +96,3 @@ services:
     env_file:
       - ./worker-data/env_file
     restart: unless-stopped
-  full-node:
-    container_name: rpc-node
-    image: "alloranetwork/allora-chain:v0.2.14"
-    environment:
-      - NETWORK=allora-testnet-1
-      - MONIKER=mysticwho_validator
-      - APP_HOME=/data
-      - HOME=/data
-      - STATE_SYNC_RPC1=https://allora-rpc.testnet-1.testnet.allora.network:443
-      - STATE_SYNC_RPC2=https://allora-rpc.testnet-1.testnet.allora.network:443
-    volumes:
-      - ./data_validator:/data
-      - ./scripts/:/scripts
-    ports:
-      - "26656-26657:26656-26657"
-    user: "0:0"
-    entrypoint: /scripts/l1_node.sh
