@@ -19,14 +19,15 @@ app = Flask(__name__)
 
 # Initialize tokens at the start
 tokens = os.environ.get('TOKENS', '').split(',')
-for token in tokens:
-    token_parts = token.split(':')
-    print(f"Token parts: {token_parts}")
-    if len(token_parts) == 2:
-        token_name = f"{token_parts[0]}USD"
-        token_cg_id = token_parts[1]
-        print(f"Initializing data for {token_name} token")
-        init_price_token(token_parts[0], token_name, 'usd')
+if tokens and len(tokens) > 0:
+    for token in tokens:
+        token_parts = token.split(':')
+        print(f"Token parts: {token_parts}")
+        if len(token_parts) == 2:
+            token_name = f"{token_parts[0]}USD"
+            token_cg_id = token_parts[1]
+            print(f"Initializing data for {token_name} token")
+            init_price_token(token_parts[0], token_name, 'usd')
 
 # Flask routes
 @app.route('/', methods=['GET'])
@@ -64,7 +65,7 @@ def get_inference(token):
     # Assuming block_height increments correlate to time, adjust this logic as needed
     intervalSteps = int(os.environ.get('INTERVAL_STEPS', 5))
     interval_data = []
-    for i in range(0, len(result), intervalSteps):  # Fetch every 5th entry for 5-minute intervals
+    for i in range(0, len(result), intervalSteps):
         interval_data.append(result[i][0])
 
     context = torch.tensor(interval_data)

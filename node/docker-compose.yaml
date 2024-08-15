@@ -47,6 +47,29 @@ services:
       - ./source-data:/app/data
     restart: unless-stopped
 
+  source-03:
+    container_name: source-03
+    build: .
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+      - API_PORT=8003
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - INTERVAL_STEPS=1440
+    ports:
+      - "8003:8003"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: >
+      gunicorn --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
+      --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
+      --worker-class gthread --workers 4 --threads 8 app:app
+    volumes:
+      - ./source-data:/app/data
+    restart: unless-stopped
+
   updater:
     container_name: updater
     build:
