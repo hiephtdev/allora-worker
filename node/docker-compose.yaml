@@ -15,6 +15,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: ["gunicorn", "--bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 --worker-class gthread --workers 4 --threads 8", "app:app"]
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -35,6 +36,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: ["gunicorn", "--bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 --worker-class gthread --workers 4 --threads 8", "app:app"]
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
