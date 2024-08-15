@@ -5,8 +5,6 @@
 ```bash
 git clone https://github.com/hiephtdev/allora-worker
 cd allora-worker
-git fetch
-git checkout offchain-v2
 ```
 
 ## 2. Cài đặt docker, các thư viện cần thiết
