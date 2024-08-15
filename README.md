@@ -30,6 +30,7 @@ cd node
 
 ```bash
 ./init.config.sh <node_name> <mnemonic> <cgc_api_key>
+# ví dụ: ./init.config.sh "MysticWho" "gospel guess idle vessel motor step xxx xxx xxx xxx xxx xxx" "GC-xxxxxx"
 ```
 
 - Nếu không cần thay đổi gì chỉ cần tạo lại config thì gõ lệnh dưới
