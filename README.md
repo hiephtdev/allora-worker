@@ -9,13 +9,19 @@ git fetch
 git checkout offchain-v2
 ```
 
-## 2. Đổi lại addressKeyName, addressRestoreMnemonic trong file node/config.json
+## 2. Đổi lại addressKeyName, addressRestoreMnemonic trong file node/config.json, CGC_API_KEY trong docker-compose
 
 ```bash
 nano ./node/config.json
 ```
 
 - Dùng bàn phím lên xuống tìm đến dòng `addressRestoreMnemonic` thay thế cụm này bằng seed phase ví của bạn, `addressKeyName` tên node
+
+```bash
+nano ./node/docker-compose.yaml
+```
+
+- Dùng bàn phím lên xuống tìm đến dòng `CGC_API_KEY` thay thế bằng api key của bạn lấy từ coingecko
 
 - Sau khi sửa xong nhấn `Ctrl + O` để lưu, sau đó `Enter`, tiếp đến nhấn `Ctrl + X` để thoát
 

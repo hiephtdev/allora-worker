@@ -9,7 +9,7 @@ services:
       # - ALLORA_VALIDATOR_API_URL=https://localhost:1317/
       - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
       - WORKER_TYPE=1
-      - CGC_API_KEY=CG-hEJs1AYe3r7zMa13ifMM3FKC
+      - CGC_API_KEY=your_cgc_api_key
     ports:
       - "8001:8001"
     healthcheck:
