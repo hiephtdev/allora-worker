@@ -53,7 +53,7 @@
             "loopSeconds": 5,
             "parameters": {
                 "InferenceEndpoint": "http://source-03:8003/inference/{Token}",
-                "Token": "BNB"
+                "Token": "BTC"
             }
         },
         {
@@ -62,7 +62,7 @@
             "loopSeconds": 5,
             "parameters": {
                 "InferenceEndpoint": "http://source-03:8003/inference/{Token}",
-                "Token": "ARB"
+                "Token": "SOL"
             }
         },
         {
