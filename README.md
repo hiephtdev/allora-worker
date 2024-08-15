@@ -21,6 +21,7 @@ nano ./node/config.json
 ```
 
 - Dùng bàn phím lên xuống tìm đến dòng `addressRestoreMnemonic` thay thế cụm này bằng seed phase ví của bạn, `addressKeyName` tên node
+Sau khi sửa xong nhấn Ctrl + O để lưu, sau đó Enter, tiếp đến nhấn Ctrl + X để thoát
 
 ```bash
 nano ./node/docker-compose.yaml
