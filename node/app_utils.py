@@ -5,21 +5,7 @@ from datetime import datetime, timedelta
 from zipfile import ZipFile
 import pandas as pd
 import sqlite3
-from app_config import CGC_API_KEY, DATABASE_PATH, BLOCK_TIME_SECONDS, DATA_BASE_PATH, ALLORA_VALIDATOR_API_URL, URL_QUERY_LATEST_BLOCK
-import retrying
-
-binance_data_path = os.path.join(DATA_BASE_PATH, "binance/futures-klines")
-
-# Function to fetch data with retry
-@retrying.retry(wait_exponential_multiplier=1000, wait_exponential_max=10000, stop_max_attempt_number=5)
-def fetch_cg_data(url):
-    headers = {
-        "accept": "application/json",
-        "x-cg-demo-api-key": CGC_API_KEY
-    }
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.json()
+from app_config import DATABASE_PATH, BLOCK_TIME_SECONDS, DATA_BASE_PATH, ALLORA_VALIDATOR_API_URL, URL_QUERY_LATEST_BLOCK
 
 # Function to check and create the table if not exists
 def check_create_table():
@@ -157,7 +143,7 @@ def init_price_token(token_name, token_from, token_to):
 
         symbol = f"{token_from.upper()}{token_to.upper()}"
         interval = "1m"  # 1-minute interval data
-
+        binance_data_path = os.path.join(DATA_BASE_PATH, "binance/futures-klines")
         download_path = os.path.join(binance_data_path, token_name.lower())
         download_binance_data(symbol, interval, end_date.year, end_date.month, download_path)
         extract_and_process_binance_data(token_name, download_path, start_date_epoch, end_date_epoch, latest_block_height)

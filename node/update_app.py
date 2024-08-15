@@ -1,9 +1,21 @@
 import os
 import sys
 import sqlite3
-from app_config import DATABASE_PATH
+from app_config import DATABASE_PATH, CGC_API_KEY
 from app_utils import fetch_cg_data, get_latest_network_block, check_create_table
 from concurrent.futures import ThreadPoolExecutor
+import retrying
+
+# Function to fetch data with retry
+@retrying.retry(wait_exponential_multiplier=1000, wait_exponential_max=10000, stop_max_attempt_number=5)
+def fetch_cg_data(url):
+    headers = {
+        "accept": "application/json",
+        "x-cg-demo-api-key": CGC_API_KEY
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
 def update_price(token_name, token_from, token_to='usd'):
     try:

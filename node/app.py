@@ -4,7 +4,7 @@ import os
 import torch
 from chronos import ChronosPipeline
 from app_config import DATABASE_PATH
-from app_utils import get_latest_network_block, init_price_token
+from app_utils import init_price_token
 
 # Constants
 MODEL_NAME = "amazon/chronos-t5-tiny"
