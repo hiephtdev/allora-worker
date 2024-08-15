@@ -4,7 +4,6 @@ import os
 import torch
 from chronos import ChronosPipeline
 from app_config import DATABASE_PATH
-from app_utils import init_price_token
 
 # Constants
 MODEL_NAME = "amazon/chronos-t5-tiny"
@@ -16,23 +15,6 @@ HTTP_RESPONSE_CODE_404 = 404
 HTTP_RESPONSE_CODE_500 = 500
 
 app = Flask(__name__)
-tokens_initialized = False
-
-# Initialize tokens at the start
-def initialize_tokens():
-    global tokens_initialized
-    if not tokens_initialized:
-        tokens = os.environ.get('TOKENS', '').split(',')
-        print(f"Tokens: {tokens}")
-        if tokens and len(tokens) > 0:
-            for token in tokens:
-                token_parts = token.split(':')
-                print(f"Token parts: {token_parts}")
-                if len(token_parts) == 2:
-                    token_name = f"{token_parts[0]}USD"
-                    print(f"Initializing data for {token_name} token")
-                    init_price_token(token_parts[0], token_name, 'usd')
-        tokens_initialized = True
                 
 # Flask routes
 @app.route('/', methods=['GET'])
@@ -101,9 +83,6 @@ def get_price(token, block_height):
         return jsonify({'block_height': result[0], 'price': result[1]}), HTTP_RESPONSE_CODE_200
     else:
         return jsonify({'error': 'No price data found for the specified token and block_height'}), HTTP_RESPONSE_CODE_404
-
-# Ensure tokens are initialized whether the script is run directly or through Gunicorn
-initialize_tokens()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=API_PORT)

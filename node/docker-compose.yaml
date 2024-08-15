@@ -16,9 +16,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -40,9 +40,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      gunicorn --preload --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -63,9 +63,9 @@ services:
       timeout: 5s
       retries: 5
     command: >
-      gunicorn --preload --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
+      sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8003 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
-      --worker-class gthread --workers 4 --threads 8 app:app
+      --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
