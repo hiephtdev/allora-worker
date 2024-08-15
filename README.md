@@ -38,8 +38,8 @@ cd node
 
 # Tạo thư mục cho worker-10m
 apt update -y && apt install -y jq
-chmod +x ./init.config.sh "01"
-./init.config.sh
+chmod +x ./init.config.sh
+./init.config.sh "01"
 ```
 
 Chạy worker

@@ -2,9 +2,10 @@ import os
 import sys
 import sqlite3
 from app_config import DATABASE_PATH, CGC_API_KEY
-from app_utils import fetch_cg_data, get_latest_network_block, check_create_table
+from app_utils import get_latest_network_block, check_create_table
 from concurrent.futures import ThreadPoolExecutor
 import retrying
+import requests
 
 # Function to fetch data with retry
 @retrying.retry(wait_exponential_multiplier=1000, wait_exponential_max=10000, stop_max_attempt_number=5)
