@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+apt-get -y install jq
+
 while true; do
   status=$(curl -s http://rpc-node:26657/status | jq -r .result.sync_info.catching_up)
   if [ "$status" == "false" ]; then
