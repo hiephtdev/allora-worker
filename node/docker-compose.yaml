@@ -15,7 +15,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: ["gunicorn", "--bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 --worker-class gthread --workers 4 --threads 8", "app:app"]
+    command: >
+      gunicorn --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
+      --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
+      --worker-class gthread --workers 4 --threads 8 app:app
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -27,7 +30,7 @@ services:
       - DATABASE_PATH=/app/data/prices.db
       - API_PORT=8002
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
-      - TOKENS=BNB:bnb,ARB:arbitrum
+      - TOKENS=BNB:binancecoin,ARB:arbitrum
       - INTERVAL_STEPS=20
     ports:
       - "8002:8002"
@@ -36,7 +39,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: ["gunicorn", "--bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 --worker-class gthread --workers 4 --threads 8", "app:app"]
+    command: >
+      gunicorn --bind 0.0.0.0:8002 --log-level info --error-logfile - --access-logfile - 
+      --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
+      --worker-class gthread --workers 4 --threads 8 app:app
     volumes:
       - ./source-data:/app/data
     restart: unless-stopped
@@ -46,9 +52,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_updater
-    entrypoint: ["sh", "-c", "while true; sleep 60; do python -u /app/update_app.py; done"]
+    entrypoint: ["sh", "-c", "while true; do sleep 60; python -u /app/update_app.py; done"]
     environment:
-      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:bnb,ARB:arbitrum
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:binancecoin,ARB:arbitrum
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
       - DATABASE_PATH=/app/data/prices.db
       - CGC_API_KEY=your_cgc_api_key
@@ -60,9 +66,10 @@ services:
     container_name: node
     image: alloranetwork/allora-offchain-node:latest
     volumes:
-      - ./worker-01-data:/data
+      - ./worker-data:/data
     depends_on:
       - source-01
+      - source-02
     env_file:
-      - ./worker-01-data/env_file
+      - ./worker-data/env_file
     restart: unless-stopped

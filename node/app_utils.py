@@ -65,9 +65,12 @@ def extract_and_process_binance_data(token_name, download_path, start_date_epoch
                         df = pd.read_csv(f, header=None)
                         df.columns = [
                             "open_time", "open", "high", "low", "close",
-                            "volume", "close_time", "volume_usd", "n_trades", 
-                            "taker_volume", "taker_volume_usd"
+                            "volume", "close_time", "quote_volume", 
+                            "count", "taker_buy_volume", "taker_buy_quote_volume", "ignore"
                         ]
+                        
+                        df['close_time'] = pd.to_numeric(df['close_time'], errors='coerce')
+                        df.dropna(subset=['close_time'], inplace=True)
                         df['close_time'] = pd.to_datetime(df['close_time'], unit='ms')
 
                         for _, row in df.iterrows():
@@ -84,7 +87,7 @@ def extract_and_process_binance_data(token_name, download_path, start_date_epoch
                             price = row['close']
                             cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", 
                                            (block_height, token_name.lower(), price))
-                            print(f"{price_timestamp} Inserted data point - block {block_height} : {price}")
+                            print(f"{token_name} - {price_timestamp} - Inserted data point - block {block_height} : {price}")
 
             except Exception as e:
                 print(f"Error reading {zip_file_path}: {str(e)}")
@@ -119,7 +122,7 @@ def get_latest_network_block():
         return {}
 
 # Initialize price token function
-def init_price_token(token_name, token_from, token_to):
+def init_price_token(symbol, token_name, token_to):
     try:
         check_create_table()
 
@@ -141,10 +144,10 @@ def init_price_token(token_name, token_from, token_to):
         start_date_epoch = int(start_date.timestamp())
         end_date_epoch = int(end_date.timestamp())
 
-        symbol = f"{token_from.upper()}{token_to.upper()}"
+        symbol = f"{symbol.upper()}{token_to.upper()}T"
         interval = "1m"  # 1-minute interval data
         binance_data_path = os.path.join(DATA_BASE_PATH, "binance/futures-klines")
-        download_path = os.path.join(binance_data_path, token_name.lower())
+        download_path = os.path.join(binance_data_path, symbol.lower())
         download_binance_data(symbol, interval, end_date.year, end_date.month, download_path)
         extract_and_process_binance_data(token_name, download_path, start_date_epoch, end_date_epoch, latest_block_height)
 

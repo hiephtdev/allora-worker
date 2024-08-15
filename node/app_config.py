@@ -10,4 +10,4 @@ ALLORA_VALIDATOR_API_URL = os.environ.get('ALLORA_VALIDATOR_API_URL', 'http://lo
 # Endpoint for querying the latest block
 URL_QUERY_LATEST_BLOCK = "cosmos/base/tendermint/v1beta1/blocks/latest"
 
-CGC_API_KEY = os.environ['CGC_API_KEY']
+CGC_API_KEY = os.environ.get('CGC_API_KEY', '')

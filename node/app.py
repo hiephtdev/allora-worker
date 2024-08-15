@@ -26,7 +26,7 @@ for token in tokens:
         token_name = f"{token_parts[0]}USD"
         token_cg_id = token_parts[1]
         print(f"Initializing data for {token_name} token")
-        init_price_token(token_name, token_cg_id, 'usd')
+        init_price_token(token_parts[0], token_name, 'usd')
 
 # Flask routes
 @app.route('/', methods=['GET'])
@@ -62,7 +62,7 @@ def get_inference(token):
         return jsonify({"error": "No data found for the specified token"}), HTTP_RESPONSE_CODE_404
     
     # Assuming block_height increments correlate to time, adjust this logic as needed
-    intervalSteps = os.environ.get('INTERVAL_STEPS', 5)
+    intervalSteps = int(os.environ.get('INTERVAL_STEPS', 5))
     interval_data = []
     for i in range(0, len(result), intervalSteps):  # Fetch every 5th entry for 5-minute intervals
         interval_data.append(result[i][0])
