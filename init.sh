@@ -27,3 +27,5 @@ else
 
     echo "Đã cài đặt Docker thành công."
 fi
+
+mkdir -p ./data_validator

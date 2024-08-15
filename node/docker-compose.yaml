@@ -99,3 +99,20 @@ services:
     env_file:
       - ./worker-data/env_file
     restart: unless-stopped
+  full-node:
+    container_name: rpc-node
+    image: "alloranetwork/allora-chain:v0.2.14"
+    environment:
+      - NETWORK=allora-testnet-1
+      - MONIKER=mysticwho_validator
+      - APP_HOME=/data
+      - HOME=/data
+      - STATE_SYNC_RPC1=https://allora-rpc.testnet-1.testnet.allora.network:443
+      - STATE_SYNC_RPC2=https://allora-rpc.testnet-1.testnet.allora.network:443
+    volumes:
+      - ./data_validator:/data
+      - ./scripts/:/scripts
+    ports:
+      - "26656-26657:26656-26657"
+    user: "0:0"
+    entrypoint: /scripts/l1_node.sh
