@@ -22,7 +22,7 @@ HTTP_RESPONSE_CODE_500 = 500
 
 # Load model and scaler
 def load_model_and_scaler(token_name, prediction_horizon):
-    model_path = f'models/{token_name.lower()}_model_{prediction_horizon}m.h5'
+    model_path = f'models/{token_name.lower()}_model_{prediction_horizon}m.keras'
     scaler_path = f'models/{token_name.lower()}_scaler_{prediction_horizon}m.pkl'
     
     if not os.path.exists(model_path) or not os.path.exists(scaler_path):

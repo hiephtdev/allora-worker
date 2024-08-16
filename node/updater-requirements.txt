@@ -1,0 +1,6 @@
+numpy==1.24.3
+flask[async]
+gunicorn[gthread]
+retrying==1.3.3
+requests
+pandas==2.1.3

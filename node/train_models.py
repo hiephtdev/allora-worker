@@ -57,9 +57,9 @@ def train_and_save_model(token_name, look_back, prediction_horizon):
         model = create_lstm_model(look_back)
         model.fit(X, Y, epochs=10, batch_size=1, verbose=2)
         
-        # Save the model
-        model_path = f'models/{token_name.lower()}_model_{prediction_horizon}m.h5'
-        model.save(model_path)
+        # Save the model using the native Keras format
+        model_path = f'models/{token_name.lower()}_model_{prediction_horizon}m.keras'
+        model.save(model_path, save_format='keras')
         
         # Save the scaler
         scaler_path = f'models/{token_name.lower()}_scaler_{prediction_horizon}m.pkl'
@@ -79,4 +79,4 @@ time_horizons = {
 
 for token in ['ETH', 'ARB', 'BTC', 'SOL', 'BNB']:
     for horizon_name, (look_back, prediction_horizon) in time_horizons.items():
-        train_and_save_model(f"{token}USD", look_back, prediction_horizon)
+        train_and_save_model(f"{token}USD".lower(), look_back, prediction_horizon)
