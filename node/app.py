@@ -2,74 +2,68 @@ from flask import Flask, jsonify, Response
 import sqlite3
 import os
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import load_model
+import joblib
 import asyncio
 import functools
-from aiohttp import ClientSession
 from app_config import DATABASE_PATH
 
 app = Flask(__name__)
 
-# Constants
+# Constants from environment variables
 API_PORT = int(os.environ.get('API_PORT', 8000))
-LOOK_BACK = 10  # Use the last 10 minutes to predict
-PREDICTION_STEPS = 10  # Predict the next 10 minutes
+LOOK_BACK = int(os.environ.get('LOOK_BACK', 10))  # Default to 10 if not set
+PREDICTION_STEPS = int(os.environ.get('PREDICTION_STEPS', 10))  # Default to 10 if not set
 
 # HTTP Response Codes
 HTTP_RESPONSE_CODE_200 = 200
 HTTP_RESPONSE_CODE_404 = 404
 HTTP_RESPONSE_CODE_500 = 500
 
-# Create an LSTM model
-def create_lstm_model():
-    model = Sequential()
-    model.add(LSTM(50, return_sequences=True, input_shape=(LOOK_BACK, 1)))
-    model.add(LSTM(50))
-    model.add(Dense(1))
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    return model
-
-# Prepare data for LSTM
-def prepare_data_for_lstm(data, look_back):
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_data = scaler.fit_transform(data)
-    X, Y = [], []
-    for i in range(len(scaled_data) - look_back - 1):
-        X.append(scaled_data[i:(i + look_back), 0])
-        Y.append(scaled_data[i + look_back, 0])
-    X = np.array(X)
-    Y = np.array(Y)
-    X = np.reshape(X, (X.shape[0], X.shape[1], 1))
-    return X, Y, scaler
+# Load model and scaler
+def load_model_and_scaler(token_name, prediction_horizon):
+    model_path = f'models/{token_name.lower()}_model_{prediction_horizon}m.h5'
+    scaler_path = f'models/{token_name.lower()}_scaler_{prediction_horizon}m.pkl'
+    
+    if not os.path.exists(model_path) or not os.path.exists(scaler_path):
+        return None, None
+    
+    model = load_model(model_path)
+    scaler = joblib.load(scaler_path)
+    return model, scaler
 
 # Cache predictions to improve performance
 @functools.lru_cache(maxsize=128)
-def cached_prediction(token_name):
+def cached_prediction(token_name, prediction_horizon):
+    model, scaler = load_model_and_scaler(token_name, prediction_horizon)
+    
+    if model is None or scaler is None:
+        return None
+    
     with sqlite3.connect(DATABASE_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
             SELECT price FROM prices 
             WHERE token=?
-            ORDER BY block_height ASC
-        """, (token_name,))
+            ORDER BY block_height DESC 
+            LIMIT ?
+        """, (token_name, LOOK_BACK))
         result = cursor.fetchall()
     
     if not result or len(result) == 0:
         return None
     
-    # Preprocess data
-    prices = np.array([x[0] for x in result]).reshape(-1, 1)
-    model = create_lstm_model()
-    X, Y, scaler = prepare_data_for_lstm(prices, LOOK_BACK)
+    # Reverse the result to chronological order
+    prices = np.array([x[0] for x in reversed(result)]).reshape(-1, 1)
     
-    # Train the model
-    model.fit(X, Y, epochs=10, batch_size=1, verbose=0)
-
-    # Make predictions for the next 10 minutes
-    recent_data = scaler.transform(prices[-LOOK_BACK:]).reshape(1, LOOK_BACK, 1)
+    # Preprocess data
+    scaled_data = scaler.transform(prices)
+    
+    # Prepare the data in the format expected by the model
+    recent_data = scaled_data.reshape(1, LOOK_BACK, 1)
     predictions = []
+
+    # Make predictions for the next N minutes
     for _ in range(PREDICTION_STEPS):
         pred = model.predict(recent_data)
         predictions.append(pred[0][0])
@@ -78,7 +72,7 @@ def cached_prediction(token_name):
     # Inverse scaling to get actual prices
     predictions = scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
 
-    # Get the mean forecast for the next 10 minutes
+    # Get the mean forecast for the next N minutes
     mean_forecast = np.mean(predictions)
     return mean_forecast
 
@@ -95,10 +89,10 @@ async def get_inference(token):
 
     try:
         loop = asyncio.get_event_loop()
-        mean_forecast = await loop.run_in_executor(None, cached_prediction, token_name)
+        mean_forecast = await loop.run_in_executor(None, cached_prediction, token_name, PREDICTION_STEPS)
 
         if mean_forecast is None:
-            return jsonify({"error": "No data found for the specified token"}), HTTP_RESPONSE_CODE_404
+            return jsonify({"error": "No data found or model unavailable for the specified token"}), HTTP_RESPONSE_CODE_404
 
         print(f"{token} inference: {mean_forecast}")
         return Response(str(mean_forecast), status=HTTP_RESPONSE_CODE_200)
@@ -108,18 +102,17 @@ async def get_inference(token):
 
 @app.route('/truth/<token>/<block_height>', methods=['GET'])
 async def get_price(token, block_height):
-    async with ClientSession() as session:
-        async with session.get(DATABASE_PATH) as response:
-            with sqlite3.connect(DATABASE_PATH) as conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    SELECT block_height, price 
-                    FROM prices 
-                    WHERE token=? AND block_height <= ? 
-                    ORDER BY ABS(block_height - ?) 
-                    LIMIT 1
-                """, (token.lower(), block_height, block_height))
-                result = cursor.fetchone()
+    # Directly interact with SQLite database
+    with sqlite3.connect(DATABASE_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT block_height, price 
+            FROM prices 
+            WHERE token=? AND block_height <= ? 
+            ORDER BY ABS(block_height - ?) 
+            LIMIT 1
+        """, (token.lower(), block_height, block_height))
+        result = cursor.fetchone()
 
     if result:
         return jsonify({'block_height': result[0], 'price': result[1]}), HTTP_RESPONSE_CODE_200

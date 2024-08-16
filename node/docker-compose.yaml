@@ -19,6 +19,38 @@ services:
     user: "0:0"
     entrypoint: /scripts/l1_node.sh
 
+  updater:
+    container_name: updater
+    build:
+      context: .
+      dockerfile: Dockerfile_updater
+    entrypoint: ["sh", "-c", "while true; do sleep 60; python -u /app/update_app.py; done"]
+    environment:
+      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:binancecoin,ARB:arbitrum
+      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - DATABASE_PATH=/app/data/prices.db
+      - CGC_API_KEY=your_cgc_api_key
+    volumes:
+      - ./source-data:/app/data
+    depends_on:
+      - rpc-node
+    restart: unless-stopped
+
+  train-models-job:
+    container_name: train-models-job
+    build:
+      context: .
+      dockerfile: Dockerfile_train_models
+    environment:
+      - DATABASE_PATH=/app/data/prices.db
+    volumes:
+      - ./source-data:/app/data
+      - ./models:/app/models
+    depends_on:
+      - updater
+    command: ["sh", "-c", "python -u /app/train_models.py && while true; do sleep 3600; python -u /app/train_models.py; done"]
+    restart: unless-stopped
+
   source-01:
     container_name: source-01
     build: .
@@ -36,13 +68,14 @@ services:
       timeout: 5s
       retries: 5
     depends_on:
-      - rpc-node
+      - train-models-job
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   source-02:
@@ -57,7 +90,7 @@ services:
     ports:
       - "8002:8002"
     depends_on:
-      - rpc-node
+      - train-models-job
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002"]
       interval: 10s
@@ -69,6 +102,7 @@ services:
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   source-03:
@@ -82,7 +116,7 @@ services:
     ports:
       - "8003:8003"
     depends_on:
-      - rpc-node
+      - train-models-job
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003"]
       interval: 10s
@@ -94,21 +128,7 @@ services:
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
-    restart: unless-stopped
-
-  updater:
-    container_name: updater
-    build:
-      context: .
-      dockerfile: Dockerfile_updater
-    entrypoint: ["sh", "-c", "while true; do sleep 60; python -u /app/update_app.py; done"]
-    environment:
-      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana,BNB:binancecoin,ARB:arbitrum
-      - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
-      - DATABASE_PATH=/app/data/prices.db
-      - CGC_API_KEY=your_cgc_api_key
-    volumes:
-      - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   node:
