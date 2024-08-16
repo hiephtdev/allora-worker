@@ -50,6 +50,11 @@ services:
       - updater
     command: ["sh", "-c", "python -u /app/train_models.py && while true; do sleep 3600; python -u /app/train_models.py; done"]
     restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   source-01:
     container_name: source-01

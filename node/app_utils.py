@@ -131,10 +131,10 @@ def init_price_token(symbol, token_name, token_to):
             cursor.execute("SELECT COUNT(*) FROM prices WHERE token=?", (token_name.lower(),))
             count = cursor.fetchone()[0]
 
-        if count > 0:
+        if count > 10000:
             print(f'Data already exists for {token_name} token, {count} entries')
             return
-
+        
         end_date = datetime.now()
         start_date = end_date - timedelta(days=31)
 

@@ -79,4 +79,4 @@ time_horizons = {
 
 for token in ['ETH', 'ARB', 'BTC', 'SOL', 'BNB']:
     for horizon_name, (look_back, prediction_horizon) in time_horizons.items():
-        train_and_save_model(token, look_back, prediction_horizon)
+        train_and_save_model(f"{token}USD", look_back, prediction_horizon)
