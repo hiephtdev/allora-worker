@@ -36,21 +36,6 @@ services:
       - rpc-node
     restart: unless-stopped
 
-  train-models-job:
-    container_name: train-models-job
-    build:
-      context: .
-      dockerfile: Dockerfile_train_models
-    environment:
-      - DATABASE_PATH=/app/data/prices.db
-    volumes:
-      - ./source-data:/app/data
-      - ./models:/app/models
-    depends_on:
-      - updater
-    command: ["sh", "-c", "sleep 300 && python -u /app/train_models.py && while true; do sleep 3600; python -u /app/train_models.py; done"]
-    restart: unless-stopped
-
   source-01:
     container_name: source-01
     build: .
@@ -69,8 +54,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    depends_on:
-      - train-models-job
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
@@ -93,8 +76,6 @@ services:
       - PREDICTION_STEPS=20
     ports:
       - "8002:8002"
-    depends_on:
-      - train-models-job
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002"]
       interval: 10s
@@ -121,8 +102,6 @@ services:
       - PREDICTION_STEPS=1440
     ports:
       - "8003:8003"
-    depends_on:
-      - train-models-job
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003"]
       interval: 10s

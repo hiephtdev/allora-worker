@@ -9,6 +9,9 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip setuptools \
     && pip install --timeout=360 --no-cache-dir -r requirements.txt
 
+# Install TensorFlow with GPU support
+RUN pip install --no-cache-dir tensorflow==2.13.0
+
 FROM project_env
 
 COPY gunicorn_conf.py app.py app_config.py app_utils.py init_data.py /app/

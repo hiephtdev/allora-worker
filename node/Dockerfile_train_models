@@ -1,17 +1,36 @@
-# Use an official Python runtime as the base image
-FROM amd64/python:3.9-buster as project_env
+# Use the official NVIDIA CUDA base image
+FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Install dependencies
-COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip setuptools \
-    && pip install --timeout=360 --no-cache-dir -r requirements.txt
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM project_env
+# Copy the requirements.txt file
+COPY requirements.txt .
 
-COPY train_models.py app_config.py /app/
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Set the entrypoint command
-ENTRYPOINT ["sh", "-c", "python -u /app/train_models.py && while true; do sleep 3600; python -u /app/train_models.py; done"]
+# Install TensorFlow with GPU support
+RUN pip3 install --no-cache-dir tensorflow==2.13.0
+
+# Copy the rest of the application code
+COPY train_models.py app_config.py .
+
+# Set the environment variable for TensorFlow to use GPU
+ENV TF_FORCE_GPU_ALLOW_GROWTH=true
+
+# Ensure the CUDA and CUDNN libraries are in the PATH
+ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+ENV PATH=/usr/local/cuda/bin:$PATH
+
+# Run the training script
+CMD ["python3", "train_models.py"]
