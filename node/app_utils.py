@@ -15,6 +15,7 @@ def check_create_table():
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS prices (
                     block_height INTEGER,
+                    timestamp INTEGER DEFAULT (strftime('%s', 'now')),
                     token TEXT,
                     price REAL,
                     PRIMARY KEY (block_height, token)
@@ -85,8 +86,8 @@ def extract_and_process_binance_data(token_name, download_path, start_date_epoch
                                 continue
 
                             price = row['close']
-                            cursor.execute("INSERT OR REPLACE INTO prices (block_height, token, price) VALUES (?, ?, ?)", 
-                                           (block_height, token_name.lower(), price))
+                            cursor.execute("INSERT OR REPLACE INTO prices (block_height, timestamp, token, price) VALUES (?, ?, ?, ?)", 
+                                           (block_height, price_timestamp, token_name.lower(), price))
                             print(f"{token_name} - {price_timestamp} - Inserted data point - block {block_height} : {price}")
 
             except Exception as e:

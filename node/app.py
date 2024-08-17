@@ -2,7 +2,7 @@ from flask import Flask, jsonify, Response
 import sqlite3
 import os
 import pandas as pd
-from fbprophet import Prophet
+from prophet import Prophet  # Đổi từ fbprophet sang prophet
 from app_config import DATABASE_PATH
 
 # Constants
@@ -36,9 +36,9 @@ def get_inference(token):
     with sqlite3.connect(DATABASE_PATH) as conn:
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT block_height, price FROM prices 
+            SELECT timestamp, price FROM prices 
             WHERE token=?
-            ORDER BY block_height ASC
+            ORDER BY timestamp ASC
         """, (token_name,))
         result = cursor.fetchall()
 

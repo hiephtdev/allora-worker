@@ -5,4 +5,5 @@ retrying==1.3.3
 requests
 pandas==2.1.3
 torch
-fbprophet==0.7.1
+prophet==1.1.2
+holidays==0.14.2
