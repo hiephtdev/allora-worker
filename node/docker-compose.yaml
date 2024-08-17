@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  rpc-node:
-    container_name: rpc-node
-    image: "alloranetwork/allora-chain:v0.3.0"
-    environment:
-      - NETWORK=allora-testnet-1
-      - MONIKER=MysticWho
-      - APP_HOME=/data
-      - HOME=/data
-      - STATE_SYNC_RPC1=https://allora-rpc.testnet-1.testnet.allora.network:443
-      - STATE_SYNC_RPC2=https://allora-rpc.testnet-1.testnet.allora.network:443
-    volumes:
-      - ./data_validator:/data
-      - ./scripts/:/scripts
-    ports:
-      - "26656-26657:26656-26657"
-    user: "0:0"
-    entrypoint: /scripts/l1_node.sh
+  # rpc-node:
+  #   container_name: rpc-node
+  #   image: "alloranetwork/allora-chain:v0.3.0"
+  #   environment:
+  #     - NETWORK=allora-testnet-1
+  #     - MONIKER=MysticWho
+  #     - APP_HOME=/data
+  #     - HOME=/data
+  #     - STATE_SYNC_RPC1=https://allora-rpc.testnet-1.testnet.allora.network:443
+  #     - STATE_SYNC_RPC2=https://allora-rpc.testnet-1.testnet.allora.network:443
+  #   volumes:
+  #     - ./data_validator:/data
+  #     - ./scripts/:/scripts
+  #   ports:
+  #     - "26656-26657:26656-26657"
+  #   user: "0:0"
+  #   entrypoint: /scripts/l1_node.sh
 
   source-01:
     container_name: source-01
@@ -35,8 +35,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    depends_on:
-      - rpc-node
     command: >
       sh -c "python init_data.py && gunicorn --preload --bind 0.0.0.0:8001 --log-level info --error-logfile - --access-logfile - 
       --worker-tmp-dir /dev/shm --graceful-timeout 120 --timeout 30 --keep-alive 5 
@@ -56,8 +54,6 @@ services:
       - INTERVAL_STEPS=20
     ports:
       - "8002:8002"
-    depends_on:
-      - rpc-node
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002"]
       interval: 10s
@@ -81,8 +77,6 @@ services:
       - INTERVAL_STEPS=1440
     ports:
       - "8003:8003"
-    depends_on:
-      - rpc-node
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003"]
       interval: 10s
@@ -117,10 +111,12 @@ services:
     volumes:
       - ./worker-data:/data
     depends_on:
-      - source-01
-      - source-02
-      - source-03
-      - rpc-node
+      source-01:
+        condition: service_healthy
+      source-02:
+        condition: service_healthy
+      source-03:
+        condition: service_healthy
     env_file:
       - ./worker-data/env_file
     restart: unless-stopped
