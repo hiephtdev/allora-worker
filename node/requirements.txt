@@ -4,5 +4,5 @@ gunicorn[gthread]
 retrying==1.3.3
 requests
 pandas==2.1.3
-torch
-git+https://github.com/amazon-science/chronos-forecasting.git
+gluonts==0.9.0  # Hoặc phiên bản tương thích khác
+mxnet==1.9.1  # Phiên bản tương thích với GluonTS
