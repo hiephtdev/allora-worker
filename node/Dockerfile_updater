@@ -5,7 +5,7 @@ FROM amd64/python:3.9-buster as project_env
 WORKDIR /app
 
 # Install dependencies
-COPY requirements.txt requirements.txt
+COPY updater-requirements.txt updater-requirements.txt
 RUN pip install --upgrade pip setuptools \
     && pip install --timeout=360 --no-cache-dir -r updater-requirements.txt
 
