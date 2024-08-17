@@ -7,6 +7,7 @@ from gluonts.trainer import Trainer
 from gluonts.dataset.common import ListDataset
 import pandas as pd
 from app_config import DATABASE_PATH
+from datetime import datetime
 
 # Constants
 API_PORT = int(os.environ.get('API_PORT', 8000))
@@ -26,7 +27,7 @@ def health():
 
 @app.route('/inference/<token>', methods=['GET'])
 def get_inference(token):
-    print(f"Received request for inference with token: {token}")
+    print(f"{datetime.now()}: Received request for inference with token: {token}")
 
     if not token:
         print("No token provided in request.")
@@ -53,17 +54,17 @@ def get_inference(token):
         price_data = [row[0] for row in result]
         start_time = "2024-08-01 00:00:00"  # Replace with actual start time if available
 
-        print(f"Preparing dataset for prediction. Data length: {len(price_data)}")
+        print(f"{datetime.now()}: {token_name} Preparing dataset for prediction. Data length: {len(price_data)}")
         # Prepare the dataset for GluonTS
         data = ListDataset([{"start": start_time, "target": price_data}], freq="1min")
         
         # Train a simple DeepAR model (can be pre-trained for more advanced usage)
-        print("Training DeepAR model...")
+        print(f"{datetime.now()}: {token_name} Training DeepAR model...")
         estimator = DeepAREstimator(freq="1min", prediction_length=PREDICTION_LENGTH, trainer=Trainer(epochs=5))
         predictor = estimator.train(data)
         
         # Predict the future values
-        print("Generating predictions...")
+        print(f"{datetime.now()}: {token_name} Generating predictions...")
         forecast_it = predictor.predict(data)
         forecast = list(forecast_it)[0]
         
@@ -71,7 +72,7 @@ def get_inference(token):
         mean_forecast = forecast.mean.tolist()
         final_price = mean_forecast[-1]
 
-        print(f"Final predicted price: {final_price}")
+        print(f"{datetime.now()}: {token_name} Final predicted price: {final_price}")
         # Return the final forecasted mean value
         return Response(str(final_price), status=HTTP_RESPONSE_CODE_200)
 
