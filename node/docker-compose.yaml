@@ -26,7 +26,7 @@ services:
       - DATABASE_PATH=/app/data/prices.db
       - API_PORT=8001
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
-      - TOKENS=ETH:ethereum,BTC:bitcoin,SOL:solana
+      - TOKENS=ETH:ethereum,BTC:bitcoin
       - PERIODS=10
     ports:
       - "8001:8001"
@@ -74,6 +74,7 @@ services:
       - DATABASE_PATH=/app/data/prices.db
       - API_PORT=8003
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
+      - TOKENS=SOL:solana
       - PERIODS=1440
     ports:
       - "8003:8003"
