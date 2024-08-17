@@ -5,5 +5,4 @@ retrying==1.3.3
 requests
 pandas==2.1.3
 torch
-tensorflow==2.13.0
-scikit-learn==1.3.0
+fbprophet==0.7.1

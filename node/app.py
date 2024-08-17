@@ -1,16 +1,12 @@
 from flask import Flask, jsonify, Response
 import sqlite3
 import os
-import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+from fbprophet import Prophet
 from app_config import DATABASE_PATH
 
 # Constants
 API_PORT = int(os.environ.get('API_PORT', 8000))
-LOOK_BACK = 10  # Dùng 10 phút trước đó để dự đoán
-PREDICTION_STEPS = 10  # Dự đoán 10 phút tiếp theo
 
 # HTTP Response Codes
 HTTP_RESPONSE_CODE_200 = 200
@@ -19,26 +15,7 @@ HTTP_RESPONSE_CODE_500 = 500
 
 app = Flask(__name__)
 
-def create_lstm_model():
-    model = Sequential()
-    model.add(LSTM(50, return_sequences=True, input_shape=(LOOK_BACK, 1)))
-    model.add(LSTM(50))
-    model.add(Dense(1))
-    model.compile(optimizer='adam', loss='mean_squared_error')
-    return model
-
-def prepare_data_for_lstm(data, look_back):
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    scaled_data = scaler.fit_transform(data)
-    X, Y = [], []
-    for i in range(len(scaled_data) - look_back - 1):
-        X.append(scaled_data[i:(i + look_back), 0])
-        Y.append(scaled_data[i + look_back, 0])
-    X = np.array(X)
-    Y = np.array(Y)
-    X = np.reshape(X, (X.shape[0], X.shape[1], 1))
-    return X, Y, scaler
-
+# Flask routes
 @app.route('/', methods=['GET'])
 def health():
     return "Hello, World, I'm alive!"
@@ -51,42 +28,48 @@ def get_inference(token):
     token_name = f"{token}USD".lower()
 
     try:
-        with sqlite3.connect(DATABASE_PATH) as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                SELECT price FROM prices 
-                WHERE token=?
-                ORDER BY block_height ASC
-            """, (token_name,))
-            result = cursor.fetchall()
+        # Initialize Prophet model
+        model = Prophet()
+    except Exception as e:
+        return jsonify({"model error": str(e)}), HTTP_RESPONSE_CODE_500
+    
+    with sqlite3.connect(DATABASE_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT block_height, price FROM prices 
+            WHERE token=?
+            ORDER BY block_height ASC
+        """, (token_name,))
+        result = cursor.fetchall()
+
+    if not result or len(result) == 0:
+        return jsonify({"error": "No data found for the specified token"}), HTTP_RESPONSE_CODE_404
+    
+    # Prepare data for Prophet
+    df = pd.DataFrame(result, columns=['ds', 'y'])  # 'ds' là cột thời gian, 'y' là giá trị
+
+    try:
+        model.fit(df)
         
-        if not result or len(result) == 0:
-            return jsonify({"error": "No data found for the specified token"}), HTTP_RESPONSE_CODE_404
+        # Lấy periods từ biến môi trường và chuyển đổi thành số nguyên
+        periods = int(os.environ.get('PERIODS', 10))  # Mặc định là 10 phút nếu không thiết lập
         
-        # Preprocess data
-        prices = np.array([x[0] for x in result]).reshape(-1, 1)
-        model = create_lstm_model()
-        X, Y, scaler = prepare_data_for_lstm(prices, LOOK_BACK)
-        
-        # Train the model
-        model.fit(X, Y, epochs=10, batch_size=1, verbose=2)
+        # Tạo DataFrame cho khoảng thời gian cần dự đoán
+        future = model.make_future_dataframe(periods=periods, freq='T')
 
-        # Make predictions for the next 10 minutes
-        recent_data = scaler.transform(prices[-LOOK_BACK:]).reshape(1, LOOK_BACK, 1)
-        predictions = []
-        for _ in range(PREDICTION_STEPS):
-            pred = model.predict(recent_data)
-            predictions.append(pred[0][0])
-            recent_data = np.append(recent_data[:, 1:, :], pred.reshape(1, 1, 1), axis=1)
+        # Dự đoán
+        forecast = model.predict(future)
 
-        # Inverse scaling to get actual prices
-        predictions = scaler.inverse_transform(np.array(predictions).reshape(-1, 1))
+        # Lấy giá trị dự đoán cuối cùng
+        mean_forecast = forecast['yhat'].iloc[-1]
 
-        # Get the mean forecast for the next 10 minutes
-        mean_forecast = np.mean(predictions)
-        print(f"{token} inference: {mean_forecast}")
-        return Response(str(mean_forecast), status=HTTP_RESPONSE_CODE_200)
+        # Trả kết quả
+        predictions = {
+            f"{periods}m_forecast": mean_forecast
+        }
 
+        print(f"{token} inference: {predictions}")
+        return jsonify(predictions), HTTP_RESPONSE_CODE_200
     except Exception as e:
         return jsonify({"error": str(e)}), HTTP_RESPONSE_CODE_500
 
