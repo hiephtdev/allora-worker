@@ -27,7 +27,7 @@ services:
       - API_PORT=8001
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
       - TOKENS=ETH:ethereum,BTC:bitcoin
-      - INTERVAL_STEPS=10
+      - PREDICTION_LENGTH=10
     ports:
       - "8001:8001"
     healthcheck:
@@ -51,7 +51,7 @@ services:
       - API_PORT=8002
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
       - TOKENS=BNB:binancecoin,ARB:arbitrum
-      - INTERVAL_STEPS=20
+      - PREDICTION_LENGTH=20
     ports:
       - "8002:8002"
     healthcheck:
@@ -74,7 +74,7 @@ services:
       - DATABASE_PATH=/app/data/prices.db
       - API_PORT=8003
       - ALLORA_VALIDATOR_API_URL=https://allora-api.testnet-1.testnet.allora.network/
-      - INTERVAL_STEPS=1440
+      - PREDICTION_LENGTH=1440
       - TOKENS=SOL:solana
     ports:
       - "8003:8003"

@@ -49,14 +49,11 @@ def get_inference(token):
     if not result or len(result) == 0:
         return jsonify({"error": "No data found for the specified token"}), HTTP_RESPONSE_CODE_404
     
-    # Assuming block_height increments correlate to time, adjust this logic as needed
-    intervalSteps = int(os.environ.get('INTERVAL_STEPS', 5))
-    interval_data = []
-    for i in range(0, len(result), intervalSteps):
-        interval_data.append(result[i][0])
-
-    context = torch.tensor(interval_data)
-    prediction_length = 1
+    # Lấy toàn bộ dữ liệu giá và chuyển thành tensor
+    context = torch.tensor([row[0] for row in result])
+    
+    # Lấy prediction_length từ biến môi trường, ví dụ như 10, 20, hoặc 1440
+    prediction_length = int(os.environ.get('PREDICTION_LENGTH', 10))
 
     try:
         forecast = pipeline.predict(context, prediction_length)
