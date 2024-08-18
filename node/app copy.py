@@ -33,8 +33,8 @@ def get_or_train_model(token_name, data):
         estimator = DeepAREstimator(freq="1min", prediction_length=PREDICTION_LENGTH, trainer=Trainer(epochs=5))
         predictor = estimator.train(data)
         
-        # os.makedirs(MODEL_PATH , exist_ok=True)
-        # predictor.serialize(model_filename)
+        os.makedirs(MODEL_PATH , exist_ok=True)
+        predictor.serialize(model_filename)
     
     return predictor
 

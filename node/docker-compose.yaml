@@ -41,6 +41,7 @@ services:
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   source-02:
@@ -65,6 +66,7 @@ services:
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   source-03:
@@ -89,6 +91,7 @@ services:
       --worker-class gthread --workers 4 --threads 8 app:app"
     volumes:
       - ./source-data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   updater:
